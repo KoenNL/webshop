@@ -15,6 +15,14 @@ class SystemTranslation
      * @var array
      */
     private $translations = array(
+        'new-product' => array(
+            'en' => 'new product',
+            'nl' => 'nieuw product'
+        ),
+        'no-results' => array(
+            'en' => 'there are no results',
+            'nl' => 'er zijn geen resultaten'
+        ),
         'product-not-found' => array(
             'en' => 'product not found',
             'nl' => 'product niet gevonden'
@@ -30,6 +38,10 @@ class SystemTranslation
         'save' => array(
             'en' => 'save',
             'nl' => 'opslaan'
+        ),
+        'search' => array(
+            'en' => 'search',
+            'nl' => 'zoeken'
         )
     );
 

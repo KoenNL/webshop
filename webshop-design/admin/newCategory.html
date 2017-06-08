@@ -1,0 +1,42 @@
+<div class="form-group">
+    <label for="language">Taal</label>
+    <select id="language" class="selectpicker">
+        <option>Nederlands</option>
+        <option>Engels</option>
+    </select>
+</div>
+<div class="row">
+    <div class="col-sm-6">
+        <form>
+            <div class="form-group">
+                <label for="name" class="required">Naam</label>
+                <input type="text" name="name" id="name" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="position" class="required">Positie</label>
+                <input type="number" name="position" id="position" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="parent">Ouder</label>
+                <select class="form-control selectpicker" title="Selecteer een categorie..." name="parent" id="parent">
+                    <option>Herenmode</option>
+                    <option data-icon="glyphicon-minus">Jeans</option>
+                    <option data-icon="glyphicon-minus">Shirts</option>
+                    <option data-icon="glyphicon-minus">Schoenen</option>
+                    <option>Damesmode</option>
+                    <option data-icon="glyphicon-minus">Rokken</option>
+                    <option data-icon="glyphicon-minus">Tops</option>
+                    <option data-icon="glyphicon-minus">Schoenen</option>
+                    <option>Tienermode</option>
+                    <option data-icon="glyphicon-minus">Jeans</option>
+                    <option data-icon="glyphicon-minus">Shirts</option>
+                    <option data-icon="glyphicon-minus">Schoenen</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="submit" name="save" value="Opslaan" class="btn btn-primary">
+                <a href="?page=categoryList" title="Terug naar overzicht" class="btn btn-default">Terug naar overzicht</a>
+            </div>
+        </form>
+    </div>
+</div>

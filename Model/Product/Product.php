@@ -107,7 +107,7 @@ class Product
     }
 
     /**
-     * @param string$description
+     * @param string $description
      * @return Product $this
      */
     public function setDescription($description)
