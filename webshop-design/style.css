@@ -1,0 +1,244 @@
+@import url('https://fonts.googleapis.com/css?family=Raleway');
+
+* {
+    font-family: 'Raleway', sans-serif;
+}
+
+html, body {
+    height: 100%;
+}
+
+a {
+    color: #000000;
+    text-decoration: underline;
+}
+
+a:hover {
+    color: #D03838;
+}
+
+::selection {
+    background-color: #D03838;
+    color: #FFFFFF;
+}
+
+.text-active {
+    color: #D03838;
+}
+
+.btn.btn-primary {
+    background-color: #D03838;
+    border: none;
+    border-radius: 0;
+}
+
+.btn.btn-primary:hover {
+    background-color: #E57676;
+}
+
+header {
+    background-color: #DCDCDC;
+}
+
+#wrapper {
+    min-height: 70%;
+}
+
+footer {
+    margin-top: 20px;
+    height: 50px;
+    background-color: #DCDCDC;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+img.img-tiny {
+    height: 80px;
+}
+
+img.img-primary {
+    height: 400px;
+}
+
+img.img-selected {
+    box-shadow: 1px 1px 7px #000000;
+}
+
+#menu.row, header.row {
+    margin-left: 0px;
+    margin-right: 0px;
+}
+
+#logo img {
+    width: 100%;
+}
+
+#search-box, #cart-indicator {
+    padding-top: 15px;
+}
+
+.navbar {
+    margin-bottom: 0;
+}
+
+.navbar-default {
+    background: none;
+    border: none;
+}
+
+.navbar-default li {
+    font-size: 16pt;
+}
+
+.navbar-default li a {
+    text-decoration: none;
+}
+
+.navbar-default li.dropdown li {
+    font-size: 12pt;
+}
+
+.navbar-default .navbar-nav .active a{
+    background-color: #DCDCDC;
+}
+
+.banner {
+    padding: 10px 0 0 15%;
+    background-color: #DCDCDC;
+    height: 120px;
+    margin-bottom: 20px;
+}
+
+.banner h1, .banner .breadcrumd, .banner .breadcrumd a {
+    color: #FFFFFF;
+    text-shadow: 2px 2px #000000;
+    text-decoration: none;
+}
+
+.banner h1 {
+    font-weight: bold;
+    font-size: 36pt;
+}
+
+.banner .breadcrumd {
+    font-style: italic;
+}
+
+.home-banner {
+    background: url('images/jeans-banner.jpg') center no-repeat;
+    height: 450px;
+}
+
+.banner-category {
+    background: url('images/damesmode.jpg') center no-repeat;
+}
+
+.inner-title {
+    font-style: italic;
+    border-bottom: 1px solid #000000;
+}
+
+.product-overview-box {
+    text-align: center;
+}
+
+.product-image {
+    height: 200px;
+}
+
+.product-brand {
+    font-size: 15pt;
+    font-weight: bold;
+    margin-top: 4px;
+    margin-bottom: 2px;
+}
+
+.product-price {
+    color: #D03838;
+    font-weight: bold;
+}
+
+.product-price-large {
+    color: #D03838;
+    font-weight: bold;
+    font-size: 30pt;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.product-brand a, .product-price a, .product-title a, a.btn {
+    text-decoration: none;
+}
+
+.product-selection-container {
+    border-top: 1px solid #000000;
+}
+
+.product-image-thumbnail {
+    margin-bottom: 10px;
+}
+
+.product-feature {
+    margin-top: 20px;
+}
+
+.feature-selection-container {
+    border-right: 1px solid #000000;
+}
+
+.feature-selection {
+    width: 100%;
+}
+
+.feature-selection ul {
+    list-style: none;
+}
+
+.feature-selection ul {
+    padding-left: 0;
+}
+
+input.checkbox {
+    border-radius: 0;
+}
+
+.product-result-container {
+    padding-top: 20px;
+    padding-left: 20px;
+}
+
+.indent {
+    margin-left: 5%;
+}
+
+.indent::before {
+    content: '- ';
+}
+
+label.required::after {
+    content: ' *';
+    color: #D03838;
+}
+
+.form-control:focus {
+    border-color: #D03838;
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(208, 56, 56, 0.6)
+}
+
+#cart-menu {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+#cart-menu a {
+    font-size: 20pt;
+}
+
+#cart-menu a.inactive {
+    color: #DCDCDC;
+    text-decoration: none;
+}
+
+table.shopping-cart img {
+    margin: 0 10px 0 10px;
+}
