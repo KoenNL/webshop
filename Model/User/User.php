@@ -1,5 +1,5 @@
 <?php
-namespace Model\user;
+namespace Model\User;
 
 use Model\Product\Variation;
 
