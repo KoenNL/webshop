@@ -79,6 +79,28 @@ class ProductManager
         return $products;
     }
 
+    public function getProductsByName($name)
+    {
+        if (empty($name) || !is_string($name)) {
+            throw new Exception('Invalid value ' . $name . ' set for name in ' . __METHOD__);
+        }
+        // Get the basic product SQL
+        $productSql = $this->getProductSql();
+
+        $sql = $productSql['sql'];
+
+        $sql .= 'WHERE `NameTranslation`.`translation` = :name AND ' . $productSql['where'];
+
+        $parameters = array(
+            'name' => $name,
+            'idLanguage' => $this->language
+        );
+
+        $products = $this->fetchProducts($sql, $parameters);
+
+        return $products;
+    }
+
     public function getProductById($idProduct)
     {
         if (empty($idProduct) || !is_numeric($idProduct)) {
