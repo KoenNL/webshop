@@ -2,8 +2,6 @@
 
 namespace Main;
 
-use Main\Config;
-use Main\Format;
 use PDO;
 use Exception;
 
@@ -17,7 +15,7 @@ class Database
     private static $connection;
 
     /**
-     *
+     * Prepared PDO SQL statement.
      * @var PDOStatement
      */
     private static $statement;
@@ -28,6 +26,12 @@ class Database
         self::$connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
 
+    /**
+     * Send an SQL query to the database.
+     * @param $query
+     * @param array|null $params
+     * @return bool
+     */
     public static function query($query, array $params = null)
     {
         if (!self::$connection) {
@@ -37,12 +41,17 @@ class Database
         self::$statement = self::$connection->prepare($query);
 
         if ($params) {
-            self::$statement = self::setParams($params);
+            self::setParams($params);
         }
 
         return self::$statement->execute();
     }
 
+    /**
+     * Add the parameters to the prepared SQL statement.
+     * @param array $params
+     * @return bool
+     */
     private static function setParams(array $params)
     {
         foreach ($params as $key => $param) {
@@ -56,6 +65,11 @@ class Database
         return true;
     }
 
+    /**
+     * Fetch a new row from the result set as an array.
+     * @return array
+     * @throws Exception
+     */
     public static function fetch()
     {
         if (empty(self::$statement)) {
@@ -65,6 +79,12 @@ class Database
         return self::$statement->fetch(PDO::FETCH_ASSOC);
     }
 
+    /**
+     * Fetch a new row from the result set as an object of the given class.
+     * @param string $class
+     * @return object
+     * @throws Exception
+     */
     public static function fetchObject($class)
     {
         $values = self::fetch();
@@ -87,5 +107,14 @@ class Database
         }
 
         return $object;
+    }
+
+    /**
+     * Returns the id of the last inserted entry into the database.
+     * @return int
+     */
+    public static function getLastInsertId()
+    {
+        return (int) self::$connection->lastInsertId();
     }
 }

@@ -58,6 +58,11 @@ class Template
     private $footer;
 
     /**
+     * @var array
+     */
+    private $breadcrumbs = array();
+
+    /**
      * Set the tempalte name. If not set, default is used.
      * @param string $template
      * @return \Main\Template
@@ -225,7 +230,50 @@ class Template
     {
         return $this->footer;
     }
-    
+
+    /**
+     * Add a breadcrumb.
+     * @param string $path
+     * @param string $title
+     * @return Template $this
+     */
+    public function addBreadcrumb($path, $title)
+    {
+        $this->breadcrumbs[] = array(
+            'path' => $path,
+            'title' => $title
+        );
+
+        return $this;
+    }
+
+    /**
+     * Add an array of breadcrumbs.
+     * @param array $breacrumbs
+     * @return Template $this
+     */
+    public function setBreadcrumbs(array $breacrumbs)
+    {
+        foreach ($breacrumbs as $breacrumb) {
+            if (empty($breacrumb['page']) || empty($breacrumb['title'])) {
+                continue;
+            }
+
+            $this->addBreadcrumb($breacrumb['path'], $breacrumb['title']);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get all breadcrumbs.
+     * @return array
+     */
+    public function getBreadcrumbs()
+    {
+        return $this->breadcrumbs;
+    }
+
     /**
      * Write the template.
      * @return boolean true on success, false on failure.

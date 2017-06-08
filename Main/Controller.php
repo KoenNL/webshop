@@ -2,8 +2,6 @@
 
 namespace Main;
 
-use Main\Config;
-use Main\Template;
 use SimpleXMLElement;
 use Exception;
 
@@ -12,7 +10,7 @@ class Controller
 
     /**
      * List of available extensions
-     * @var array 
+     * @var array
      */
     private $extensions = array(
         'json' => 'toJSON',
@@ -30,24 +28,29 @@ class Controller
      * @var string
      */
     private $controller;
-    
+
     /**
      * Currently set action.
      * @var string
      */
     private $action = 'mainIndexAction';
-    
+
     /**
      * Template class.
-     * @var Main\Template
+     * @var Template
      */
     public $template;
-    
+
     /**
      * Values used by the controller and view.
      * @var array
      */
     private $values = array();
+
+    /**
+     * @var string
+     */
+    private $language;
 
     public function __construct($controller, $action)
     {
@@ -74,7 +77,7 @@ class Controller
     public function indexAction()
     {
         $this->template->setTitle('Kore v' . Config::KORE_VERSION);
-        
+
         return $this->write(array('message' => 'Welcome to the Kore framework!', 'version' => Config::KORE_VERSION));
     }
 
@@ -121,7 +124,7 @@ class Controller
         if (!$view) {
             $view = str_replace('Controller', '', $this->controller) . '/' . ucfirst($this->action);
         }
-        
+
         $this->template->setBody($this->renderView($values, $view));
 
         return $this->template->writeTemplate();
@@ -129,6 +132,7 @@ class Controller
 
     /**
      * Process the given view and the set values and return a string with the resulting HTML.
+     * @param array $values Values to use in the view.
      * @param string $view name of the view.
      * @return string processed HTML.
      * @throws Exception
@@ -136,9 +140,9 @@ class Controller
     protected function renderView(array $values, $view)
     {
         $this->values = $values;
-        
+
         $view_file = Config::getValue('path.base') . 'View/' . $view . '.php';
-        
+
         if (!file_exists($view_file)) {
             throw new Exception('View file for ' . $view . ' does not exist.');
         }
@@ -162,10 +166,11 @@ class Controller
         header('Content-Type: application/json');
         exit(json_encode($values));
     }
-    
+
     /**
      * Write an XML file.
      * @param array $values an array with all the values to write as XML file.
+     * @param string $root
      */
     protected function toXML(array $values, $root = null)
     {
@@ -177,7 +182,7 @@ class Controller
 
     /**
      * Get a value within a view.
-     * @param string $name recusive name of the setting using "." as delimiter.
+     * @param string $name recursive name of the setting using "." as delimiter.
      * @return mixed
      */
     public function getValue($name)
@@ -202,5 +207,47 @@ class Controller
 
             return $values[$key];
         }
+
+        return null;
+    }
+
+    /**
+     * Redirect to the given controller and action.
+     * @param string $controller
+     * @param string $action
+     */
+    protected function redirect($controller, $action)
+    {
+        header('Location: ' . $controller . '/' . $action);
+    }
+
+    /**
+     * Set the language. Will be stored in a _SESSION value.
+     * @param int $language
+     * @return Controller $this
+     */
+    public function setLanguage($language)
+    {
+        $this->language = $language;
+
+        $_SESSION['language'] = $this->language;
+
+        return $this;
+    }
+
+    /**
+     * Get the language. If no language is set it returns the _SESSION language.
+     * If no _SESSION language is set it sets and returns the default language.
+     * @return string
+     */
+    public function getLanguage()
+    {
+        if (!$this->language && empty($_SESSION['language'])) {
+            $this->setLanguage(Config::getValue('translation.defaultLanguage'));
+        } elseif (!$this->language && !empty($_SESSION['language'])) {
+            $this->setLanguage($_SESSION['language']);
+        }
+
+        return $this->language;
     }
 }
