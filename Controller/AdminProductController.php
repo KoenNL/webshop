@@ -5,6 +5,7 @@ namespace Controller;
 use Model\Product\Product;
 use Model\Product\ProductManager;
 use Model\Translation\SystemTranslation;
+use Model\Translation\TranslationManager;
 
 class AdminProductController extends ProductController
 {
@@ -42,6 +43,8 @@ class AdminProductController extends ProductController
 
         $systemTranslation = new SystemTranslation($this->getLanguage());
 
+        $translationManager = new TranslationManager($this->getLanguage());
+
         if ($idProduct) {
             $product = $productManager->getProductById($idProduct);
             $this->template->setTitle($product->getBrand() . ' ' . $product->getName());
@@ -59,7 +62,8 @@ class AdminProductController extends ProductController
 
         $values = array(
             'product' => $product,
-            'save' => $systemTranslation->translate('save')
+            'systemTranslation' => $systemTranslation,
+            'languages' => $translationManager->getLanguages()
         );
 
         $this->write($values);

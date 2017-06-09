@@ -15,6 +15,54 @@ class SystemTranslation
      * @var array
      */
     private $translations = array(
+        'add-feature' => array(
+            'en' => 'add feature',
+            'nl' => 'kenmerk toevoegen'
+        ),
+        'back-to-summary' => array(
+            'en' => 'back to summary',
+            'nl' => 'terug naar overzicht'
+        ),
+        'brand' => array(
+            'en' => 'brand',
+            'nl' => 'merk'
+        ),
+        'categories' => array(
+            'en' => 'categories',
+            'nl' => 'categorie&euml;n'
+        ),
+        'close' => array(
+            'en' => 'close',
+            'nl' => 'sluiten'
+        ),
+        'combination-discount' => array(
+            'en' => 'combination discount',
+            'nl' => 'combinatiekorting'
+        ),
+        'description' => array(
+            'en' => 'description',
+            'nl' => 'omschrijving'
+        ),
+        'edit' => array(
+            'en' => 'edit',
+            'nl' => 'wijzigen'
+        ),
+        'features' => array(
+            'en' => 'features',
+            'nl' => 'kenmerken'
+        ),
+        'general' => array(
+            'en' => 'general',
+            'nl' => 'algemeen'
+        ),
+        'images' => array(
+            'en' => 'images',
+            'nl' => 'afbeeldingen'
+        ),
+        'name' => array(
+            'en' => 'name',
+            'nl' => 'naam'
+        ),
         'new-product' => array(
             'en' => 'new product',
             'nl' => 'nieuw product'
@@ -22,6 +70,10 @@ class SystemTranslation
         'no-results' => array(
             'en' => 'there are no results',
             'nl' => 'er zijn geen resultaten'
+        ),
+        'price' => array(
+            'en' => 'price',
+            'nl' => 'prijs'
         ),
         'product-not-found' => array(
             'en' => 'product not found',
@@ -42,7 +94,19 @@ class SystemTranslation
         'search' => array(
             'en' => 'search',
             'nl' => 'zoeken'
-        )
+        ),
+        'select' => array(
+            'en' => 'select',
+            'nl' => 'selecteren'
+        ),
+        'to-variations' => array(
+            'en' => 'to variations',
+            'nl' => 'naar variaties'
+        ),
+        'upload' => array(
+            'en' => 'upload',
+            'nl' => 'uploaden'
+        ),
     );
 
     /**

@@ -107,6 +107,15 @@ class Product
     }
 
     /**
+     * @return string
+     * @todo nog maken!
+     */
+    public function getPrice()
+    {
+        return 'Dit is nep!!!!';
+    }
+
+    /**
      * @param string$description
      * @return Product $this
      */
