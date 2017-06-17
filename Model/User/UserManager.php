@@ -28,27 +28,58 @@ class UserManager
     public function getUsers()
     {
         $sql = 'SELECT * 
-          FROM `users`';
+          FROM `User`';
 
         $users = array();
 
         Database::query($sql);
+        // Return a mutiple user
         while ($user = Database::fetchObject('Model\\User\\User')) {
             $users[] = $user;
         }
+
         return $users;
     }
-}
-{
-    public function getUserByid(idUser)
-{
-    if (empty$idUser) || !is_numeric(idUser) {
-        throw new \Exception('Invalid vanlue' . $idUser . ' set for idUser in ' .__METHOD__);
 
-        }
-}
 
+    public function getUserByid($idUser)
+    {
+        $sql = 'SELECT *
+        FROM `User`
+        WHERE `idUser` = :idUser';
+
+        $parameters = array(
+            'idUser' => $idUser
+        );
+
+        Database::query($sql, $parameters);
+
+        // Return a single user
+        return Database::fetchObject('Model\\User\\User');
     }
-// private insert
-// private
 
+    public function getUserByEmailAddress($emailAddress)
+    {
+        $sql = 'SELECT * 
+        FROM `User`
+        WHERE `emailAddress` = :emailAddress';
+
+        $parameters = array(
+            'emailAddress' => $emailAddress
+        );
+
+        Database::query($sql, $parameters);
+
+        //Return a single emailAddress
+        return Database::fetchObject('Model\\User\\User');
+    }
+}
+
+
+
+
+// private insert
+// private update
+// archief actief true or false
+// login active or not.
+// passwordhash php validate password
