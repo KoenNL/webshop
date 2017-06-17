@@ -56,9 +56,9 @@ class Database
     {
         foreach ($params as $key => $param) {
             if (is_numeric($param) && !is_float($param)) {
-                self::$statement->bindParam($key, $param, PDO::PARAM_INT);
+                self::$statement->bindValue($key, $param, PDO::PARAM_INT);
             } else {
-                self::$statement->bindParam($key, $param, PDO::PARAM_STR);
+                self::$statement->bindValue($key, $param, PDO::PARAM_STR);
             }
         }
 

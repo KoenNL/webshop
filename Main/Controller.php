@@ -218,7 +218,7 @@ class Controller
      */
     protected function redirect($controller, $action)
     {
-        header('Location: ' . $controller . '/' . $action);
+        return header('Location: /' . $controller . '/' . $action);
     }
 
     /**

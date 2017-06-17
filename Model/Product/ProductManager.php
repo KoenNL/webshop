@@ -3,7 +3,9 @@
 namespace Model\Product;
 
 use Exception;
+use Main\Config;
 use Main\Database;
+use Main\Format;
 use Model\Image\ImageManager;
 use Model\Translation\TranslationManager;
 
@@ -21,7 +23,7 @@ class ProductManager
      */
     public function __construct($language)
     {
-        $this->laguage = (int)$language;
+        $this->language = $language;
     }
 
     /**
@@ -79,6 +81,12 @@ class ProductManager
         return $products;
     }
 
+    /**
+     * Get an array of products based on a name.
+     * @param string $name
+     * @return array An array of Product objects.
+     * @throws Exception
+     */
     public function getProductsByName($name)
     {
         if (empty($name) || !is_string($name)) {
@@ -101,6 +109,12 @@ class ProductManager
         return $products;
     }
 
+    /**
+     * Get a Product based on the id.
+     * @param int $idProduct
+     * @return Product|null
+     * @throws Exception
+     */
     public function getProductById($idProduct)
     {
         if (empty($idProduct) || !is_numeric($idProduct)) {
@@ -120,6 +134,12 @@ class ProductManager
         return !empty($products[0]) ? $products[0] : null;
     }
 
+    /**
+     * Get a Product based on the URI.
+     * @param string $uri
+     * @return Product|null
+     * @throws Exception
+     */
     public function getProductByUri($uri)
     {
         if (empty($uri) || !is_string($uri)) {
@@ -142,6 +162,12 @@ class ProductManager
         return !empty($products[0]) ? $products[0] : null;
     }
 
+    /**
+     * Get an array with the newest products.
+     * @param int $limit The limit of the amount of returned Product objects.
+     * @return array An array of Product objects.
+     * @throws Exception
+     */
     public function getNewProducts($limit)
     {
         if (empty($limit) || !is_numeric($limit)) {
@@ -159,18 +185,156 @@ class ProductManager
         return $this->fetchProducts($sql, $parameters);
     }
 
+    /**
+     * Save a new, or an existing Product to the database.
+     * @param Product $product
+     * @return Product
+     */
     public function save(Product $product)
     {
         if ($product->getId()) {
-            return $this->insert($product);
+            return $this->update($product);
         }
 
-        return $this->update($product);
+        return $this->insert($product);
     }
+
 
     public function archive(Product $product)
     {
 
+    }
+
+    /**
+     * Create a new friendly URI form a product brand and name.
+     * Also checks if the resulting URI already exists and changes it if it does.
+     * @param Product $product
+     * @return string The resulting URI.
+     */
+    public function createUri(Product $product)
+    {
+        $uri = Format::toUri($product->getBrand() . '-' . $product->getName());
+
+        if ($this->getProductByUri($uri)) {
+            // If it already exists check for an incrementing number...
+            $increment = substr($uri, strrpos($uri, '-'));
+            if (is_numeric($increment)) {
+                // ... and add by 1
+                $uri = str_replace('-' . $increment, '-' . ($increment + 1), $uri);
+            } else {
+                // ... or create an increment.
+                $uri .= '-1';
+            }
+            // Try to create the URI again.
+            return $this->createUri($uri);
+        }
+
+        return $uri;
+    }
+
+    /**
+     * Get all FeatureValues by the given id feature.
+     * @param int $idFeature
+     * @return array An array with FeatureValue objects.
+     */
+    public function getFeatureValuesByFeature($idFeature)
+    {
+        $sql = 'SELECT * FROM `FeatureValue` WHERE `idFeature` = :idFeature';
+        $parameters = array('idFeature' => $idFeature);
+
+        Database::query($sql, $parameters);
+
+        $featureValues = array();
+
+        while ($featureValue = Database::fetchObject('Model\\Product\\FeatureValue')) {
+            $featureValues[] = $featureValue;
+        }
+
+        return $featureValue;
+    }
+
+    /**
+     * Save a new FeatureValue.
+     * @param FeatureValue $featureValue
+     * @return bool True on success or false on failure.
+     */
+    public function saveFeatureValue(FeatureValue $featureValue)
+    {
+        $sql = 'INSERT INTO `FeatureValue` (`idFeature`, `value`) VALUES(:idFeature, :value)';
+        $parameters = array(
+            'idFeature' => $featureValue->getIdFeature(),
+            'value' => $featureValue->getValue()
+        );
+
+        try {
+            Database::query($sql, $parameters);
+        } catch (Exception $e) {
+            if (Config::getValue('debug')) {
+                throw new Exception($e->getMessage());
+            }
+            return false;
+        }
+
+        $idFeatureValue = Database::getLastInsertId();
+
+        if (!$idFeatureValue) {
+            return false;
+        }
+
+        $featureValue->setIdFeatureValue($idFeatureValue);
+
+        return true;
+    }
+
+    /**
+     * Save a new Feature.
+     * @param Feature $feature
+     * @return bool True on success or false on failure.
+     */
+    public function saveFeature(Feature $feature)
+    {
+        $sql = 'INSERT INTO `Translation` (`translation`, `idLanguage`) VALUES(:name, :idLanguage)';
+        $parameters = array(
+            'name' => $feature->getName(),
+            'idLanguage' => $this->language
+        );
+
+        try {
+            Database::query($sql, $parameters);
+        } catch (Exception $e) {
+            if (Config::getValue('debug')) {
+                throw new Exception($e->getMessage());
+            }
+            return false;
+        }
+
+        $idTranslation = Database::getLastInsertId();
+
+        if (!$idTranslation) {
+            return false;
+        }
+
+        $sqlFeature = 'INSERT INTO `Feature` (`name`) VALUES(:name)';
+        $featureParameters = array('name' => $idTranslation);
+
+        try {
+            Database::query($sqlFeature, $featureParameters);
+        } catch (Exception $e) {
+            if (Config::getValue('debug')) {
+                throw new Exception($e->getMessage());
+            }
+            return false;
+        }
+
+        $idFeature = Database::getLastInsertId();
+
+        if (!$idFeature) {
+            return false;
+        }
+
+        $feature->setIdFeature($idFeature);
+
+        return true;
     }
 
     private function getProductSql()
@@ -279,7 +443,31 @@ class ProductManager
 
         $product->setIdProduct($idProduct);
 
-        return $product;
+        $this->saveCategories($product);
+        $this->createVariations($product);
+
+        return true;
+    }
+
+    /**
+     * Create new variations and add them to the existing ones.
+     * @param array $features
+     * @param array $variations
+     * @return array
+     */
+    private function addFeatures(array $features, array $variations)
+    {
+        $result = array();
+        $variationKey = 0;
+        foreach ($variations as $variation) {
+            foreach ($features as $feature) {
+                $result[$variationKey] = $variation;
+                $result[$variationKey][] = $feature;
+                $variationKey++;
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -290,18 +478,27 @@ class ProductManager
      */
     private function createVariations(Product $product, array $features)
     {
+        $variations = array();
+
+        // Go through every feature.
+        foreach ($features as $key => $feature) {
+            // If no variations are present create the array with the current feature values.
+            if (!$variations) {
+                foreach ($feature as $variation) {
+                    $variations[] = array_keys($variation);
+                }
+            } else {
+                $variations = $this->addFeatures($feature, $variations);
+            }
+        }
+
         $variationSql = 'INSERT INTO `Variation` (`idProduct`, `price`, `stock`, `tax`) 
             VALUES(:idProduct, :price, :stock, :tax)';
 
         $variationFeatureValueSql = 'INSERT INTO `VariationFeatureValue` VALUES(:idVariation, :idFeatureValue)';
 
-        $variations = array();
-
         // This array is generated by the form's POST
-        foreach ($features as $idFeature => $featureValues) {
-            foreach ($features as $idSecondaryFeature => $secondaryFeatureValues) {
-
-            }
+        foreach ($variations as $variation) {
             $variationParameters = array(
                 'idProduct' => $product->getIdProduct(),
                 'price' => $product->getPrice(),
@@ -310,6 +507,7 @@ class ProductManager
                 'tax' => 0.00
             );
 
+            // Save the variation.
             Database::query($variationSql, $variationParameters);
 
             $idVariation = Database::getLastInsertId();
@@ -318,7 +516,10 @@ class ProductManager
                 return false;
             }
 
-            foreach ($featureValues as $idFeatureValue) {
+            $this->saveImages($product, $idVariation);
+
+            // Save all relations between the variation and it's feature values.
+            foreach ($variation as $idFeatureValue) {
                 $variationFeatureValueParameters = array(
                     'idVariation' => $idVariation,
                     'idFeatureValue' => $idFeatureValue
@@ -326,6 +527,43 @@ class ProductManager
 
                 Database::query($variationFeatureValueSql, $variationFeatureValueParameters);
             }
+        }
+
+        return true;
+    }
+
+    /**
+     * Save all categories.
+     * @param Product $product
+     * @return bool True on success or false on failure.
+     */
+    private function saveCategories(Product $product)
+    {
+        $sql = 'INSERT INTO `ProductCategory` VALUES(:idProduct, :idCategory)';
+        $parameters = array('idProduct' => $product->getIdProduct());
+        foreach ($product->getCategories() as $category) {
+            $parameters['idCategory'] = $category->getIdCategory();
+
+            Database::query($sql, $parameters);
+        }
+
+        return true;
+    }
+
+    /**
+     * Save all images.
+     * @param Product $product
+     * @param $idVariation
+     * @return bool True on success or false on failure.
+     */
+    private function saveImages(Product $product, $idVariation)
+    {
+        $sql = 'INSERT INTO `VariationImage` VALUES(:idVariation, :idImage)';
+        $parameters = array('idVariation' => $idVariation);
+        foreach ($product->getImages() as $image) {
+            $parameters['idImage'] = $image->getIdImage();
+
+            Database::query($sql, $parameters);
         }
 
         return true;

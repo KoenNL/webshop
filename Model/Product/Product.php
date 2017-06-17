@@ -4,6 +4,8 @@ namespace Model\Product;
 
 use DateTime;
 use Exception;
+use Model\Category\Category;
+use Model\Image\Image;
 
 class Product
 {
@@ -23,6 +25,10 @@ class Product
      * @var string
      */
     private $description;
+    /**
+     * @var float
+     */
+    private $price;
     /**
      * @var bool
      */
@@ -44,6 +50,14 @@ class Product
      * @var array
      */
     private $variations = array();
+    /**
+     * @var array
+     */
+    private $categories = array();
+    /**
+     * @var array
+     */
+    private $images = array();
     /**
      * @var int
      */
@@ -107,15 +121,6 @@ class Product
     }
 
     /**
-     * @return string
-     * @todo nog maken!
-     */
-    public function getPrice()
-    {
-        return 'Dit is nep!!!!';
-    }
-
-    /**
      * @param string$description
      * @return Product $this
      */
@@ -132,6 +137,25 @@ class Product
     public function getDescription()
     {
         return $this->description;
+    }
+
+    /**
+     * @param float $price
+     * @return Product $this
+     */
+    public function setPrice($price)
+    {
+        $this->price = floatval($price);
+
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getPrice()
+    {
+        return $this->price;
     }
 
     /**
@@ -249,6 +273,70 @@ class Product
     public function getVariations()
     {
         return $this->variations;
+    }
+
+    /**
+     * @param Category $category
+     * @return Product $this
+     */
+    public function addCategory(Category $category)
+    {
+        $this->categories[] = $category;
+
+        return $this;
+    }
+
+    /**
+     * @param array $categories
+     * @return Product $this
+     */
+    public function setCategories(array $categories)
+    {
+        foreach ($categories as $category) {
+            $this->addCategory($category);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getCategories()
+    {
+        return $this->categories;
+    }
+
+    /**
+     * @param Image $image
+     * @return Product $this
+     */
+    public function addImage(Image $image)
+    {
+        $this->images[] = $image;
+
+        return $this;
+    }
+
+    /**
+     * @param array $images
+     * @return Product $this
+     */
+    public function setImages(array $images)
+    {
+        foreach ($images as $image) {
+            $this->addImage($image);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getImages()
+    {
+        return $this->images;
     }
 
     /**

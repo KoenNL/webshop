@@ -47,6 +47,10 @@ class SystemTranslation
             'en' => 'edit',
             'nl' => 'wijzigen'
         ),
+        'failed-to-save' => array(
+            'en' => 'failed to save value to the database',
+            'nl' => 'het was niet mogelijk om de waarde op te slaan in de database'
+        ),
         'features' => array(
             'en' => 'features',
             'nl' => 'kenmerken'
@@ -58,6 +62,10 @@ class SystemTranslation
         'images' => array(
             'en' => 'images',
             'nl' => 'afbeeldingen'
+        ),
+        'invalid-value' => array(
+            'en' => 'invalid value',
+            'nl' => 'ongeldige waarde'
         ),
         'name' => array(
             'en' => 'name',
