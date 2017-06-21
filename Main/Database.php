@@ -68,17 +68,29 @@ class Database
     /**
      * Fetch a new row from the result set as an array.
      * @return array
-     * @throws Exception
      */
     public static function fetch()
     {
-        if (empty(self::$statement)) {
-            throw new Exception('No SQL statement set.');
+        if (!self::$statement) {
+            return null;
         }
 
         return self::$statement->fetch(PDO::FETCH_ASSOC);
     }
 
+    /**
+     * Fetch all rows of the result set as an associative array.
+     * @return array
+     */
+    public static function fetchAll()
+    {
+        if (!self::$statement) {
+            return array();
+        }
+        
+        return self::$statement->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
     /**
      * Fetch a new row from the result set as an object of the given class.
      * @param string $class
@@ -116,5 +128,17 @@ class Database
     public static function getLastInsertId()
     {
         return (int) self::$connection->lastInsertId();
+    }
+
+    /**
+     * Returns the amount of inserted, updated, deleted or selected rows depending on the preceding query.
+     * @return int
+     */
+    public static function getRowCount()
+    {
+        if (!self::$statement) {
+            return 0;
+        }
+        return (int) self::$statement->rowCount();
     }
 }

@@ -1,18 +1,23 @@
 <?php
     $product = $controller->getValue('product');
     $systemTranslation = $controller->getValue('systemTranslation');
-?>
-<div class="form-group">
-    <label for="language">Taal</label>
-    <select id="language" class="selectpicker">
-        <?php foreach ($controller->getValue('languages') as $language) : ?>
-            <option value="<?php echo $language['idLanguage']; ?>"><?php echo $language['name']; ?></option>
-        <?php endforeach; ?>
-    </select>
-</div>
 
-<form>
+    if ($controller->getValue('error')) :
+?>
+<div class="alert alert-danger">
+    <p><?php echo ucfirst($controller->getValue('error'));?></p>
+</div>
+<?php endif; ?>
+<form method="post" action="/adminproduct/product">
     <div class="row">
+        <div class="form-group">
+            <label for="language">Taal</label>
+            <select id="language" name="language" class="selectpicker">
+                <?php foreach ($controller->getValue('languages') as $language) : ?>
+                    <option value="<?php echo $language['idLanguage']; ?>"><?php echo $language['name']; ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
         <div class="col-md-8">
             <h2><?php echo ucfirst($systemTranslation->translate('general')); ?></h2>
             <div class="form-group">
@@ -33,12 +38,12 @@
             </div>
             <div class="form-group">
                 <label for="categories" class="required"><?php echo ucfirst($systemTranslation->translate('categories')); ?></label>
-                <select class="form-control selectpicker" title="<?php echo ucfirst($systemTranslation->translate('categories')) . ' ' . $systemTranslation->translate('select'); ?>..." name="categories"
-                        id="categories" multiple required>
+                <select class="form-control selectpicker" title="<?php echo ucfirst($systemTranslation->translate('categories')) . ' ' . $systemTranslation->translate('select'); ?>..."
+                        id="categories[]" name="categories[]" multiple required>
                     <?php foreach ($controller->getValue('categories') as $category) : ?>
-                        <option value="<?php echo $category->getIdCategory(); ?>" <?php echo $category->getParent() ? 'data-icon="glyphicon-minus"' : '' ;?>
+                        <option value="<?php echo $category->getIdCategory(); ?>" <?php echo ($category->getParentCategory() ? 'data-icon="glyphicon-minus"' : '') ;?>
                             <?php echo $product->hasCategory($category) ? 'selected' : ''; ?>>
-                            <?php echo $category->getName(); ?>
+                            <?php echo ucfirst($category->getName()->getTranslation()); ?>
                         </option>
                     <?php endforeach; ?>
                 </select>
@@ -51,46 +56,36 @@
             <h2><?php echo ucfirst($systemTranslation->translate('features')); ?></h2>
             <div class="row">
                 <div class="col-md-12">
-                    <select class="selectpicker" title="<?php echo ucfirst($systemTranslation->translate('add-feature')); ?>...">
+                    <select class="selectpicker" title="<?php echo ucfirst($systemTranslation->translate('add-feature')); ?>..." id="add-feature">
                         <?php foreach ($controller->getValue('features') as $feature) : ?>
-
+                            <option value="<?php echo $feature->getIdFeature();?>"><?php echo ucfirst($feature->getName()->getTranslation()); ?></option>
                         <?php endforeach; ?>
-                        <option>Maat</option>
-                        <option>Kleur</option>
-                        <option>Breedtemaat</option>
-                        <option>Lengtemaat</option>
                     </select>
-                    <button type="button" class="btn btn-default btn-sm" title="<?php echo ucfirst($systemTranslation->translate('add-feature')); ?>"><span
+                    <button type="button" class="btn btn-default btn-sm" id="add-feature-button"
+                            title="<?php echo ucfirst($systemTranslation->translate('add-feature')); ?>"><span
                             class="glyphicon glyphicon-plus"></span></button>
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-12">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">Maat</div>
+                <div class="col-md-12" id="feature-panels">
+                    <div class="panel panel-default feature-panel clone">
+                        <div class="panel-heading"></div>
                         <div class="panel-body">
-                            <div class="checkbox">
-                                <label for="feature-maat-s"><input class="checkbox" id="feature-maat-s"
-                                                                   type="checkbox" checked>S</label>
-                            </div>
-                            <div class="checkbox">
-                                <label for="feature-maat-m"><input class="checkbox" id="feature-maat-m"
-                                                                   type="checkbox" checked>M</label>
-                            </div>
-                            <div class="checkbox">
-                                <label for="feature-maat-l"><input class="checkbox" id="feature-maat-l"
-                                                                   type="checkbox" checked>L</label>
-                            </div>
-                            <div class="checkbox">
-                                <label for="feature-maat-xl"><input class="checkbox" id="feature-maat-xl"
-                                                                    type="checkbox" checked>XL</label>
+                            <div class="feature-values">
+                                <div class="checkbox clone">
+                                    <label><input class="checkbox" type="checkbox" checked></label>
+                                </div>
                             </div>
                             <div class="form-group">
                                 <div class="col-sm-4">
-                                    <input type="text" class="form-control" placeholder="Nieuw kenmerk...">
+                                    <input type="text" class="form-control new-feature-value"
+                                           placeholder="<?php echo ucfirst($systemTranslation->translate('new-value')); ?>...">
                                 </div>
                                 <div class="col-sm-4">
-                                    <button type="button" class="btn btn-default" title="Toevoegen"><span class="glyphicon glyphicon-plus"</button>
+                                    <button type="button" class="btn btn-default add-new-feature-value"
+                                            title="<?php echo ucfirst($systemTranslation->translate('add')); ?>">
+                                        <span class="glyphicon glyphicon-plus"></span>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -116,8 +111,10 @@
     <div class="row">
         <div class="col-md-12">
             <input type="submit" name="save" value="<?php echo ucfirst($systemTranslation->translate('save')); ?>" class="btn btn-primary">
-            <a href="?page=productList" title="<?php echo ucfirst($systemTranslation->translate('back-to-summary')); ?>" class="btn btn-default"><?php echo ucfirst($systemTranslation->translate('back-to-summary')); ?></a>
+            <a href="/adminproduct/productlist" title="<?php echo ucfirst($systemTranslation->translate('back-to-summary')); ?>" class="btn btn-default"><?php echo ucfirst($systemTranslation->translate('back-to-summary')); ?></a>
+            <?php if ($product->getIdProduct()) : ?>
             <a href="?page=productVariations" class="btn btn-default"><?php echo ucfirst($systemTranslation->translate('to-variations')); ?></a>
+            <?php endif; ?>
         </div>
     </div>
 </form>

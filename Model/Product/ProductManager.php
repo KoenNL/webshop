@@ -7,6 +7,7 @@ use Main\Config;
 use Main\Database;
 use Main\Format;
 use Model\Image\ImageManager;
+use Model\Translation\Translation;
 use Model\Translation\TranslationManager;
 
 class ProductManager
@@ -73,6 +74,7 @@ class ProductManager
         // Set the language for the correct translations.
         $sql .= $productSql['where'];
         $parameters['idLanguage'] = $this->language;
+        $parameters['active'] = true;
 
         Database::query($sql, $parameters);
 
@@ -101,7 +103,8 @@ class ProductManager
 
         $parameters = array(
             'name' => $name,
-            'idLanguage' => $this->language
+            'idLanguage' => $this->language,
+            'active' => true
         );
 
         $products = $this->fetchProducts($sql, $parameters);
@@ -127,7 +130,10 @@ class ProductManager
 
         $sql .= 'WHERE `Product`.`idProduct` = :idProduct';
 
-        $parameters = array('idProduct' => (int)$idProduct);
+        $parameters = array(
+            'idProduct' => (int)$idProduct,
+            'active' => true
+        );
 
         $products = $this->fetchProducts($sql, $parameters);
 
@@ -154,7 +160,8 @@ class ProductManager
 
         $parameters = array(
             'uri' => $uri,
-            'idLanguage' => $this->language
+            'idLanguage' => $this->language,
+            'active' => true
         );
 
         $products = $this->fetchProducts($sql, $parameters);
@@ -180,7 +187,10 @@ class ProductManager
 
         $sql .= 'ORDER BY `Product`.`insertDate` ASC LIMIT :limit';
 
-        $parameters = array('limit' => $limit);
+        $parameters = array(
+            'limit' => $limit,
+            'active' => true
+        );
 
         return $this->fetchProducts($sql, $parameters);
     }
@@ -188,21 +198,22 @@ class ProductManager
     /**
      * Save a new, or an existing Product to the database.
      * @param Product $product
-     * @return Product
+     * @param array $features
+     * @return bool
      */
-    public function save(Product $product)
+    public function save(Product $product, array $features)
     {
-        if ($product->getId()) {
-            return $this->update($product);
+        if ($product->getIdProduct()) {
+            return $this->update($product, $features);
         }
-
-        return $this->insert($product);
+        return $this->insert($product, $features);
     }
 
 
     public function archive(Product $product)
     {
-
+        $product->setActive(false);
+        return $this->update($product);
     }
 
     /**
@@ -233,6 +244,37 @@ class ProductManager
     }
 
     /**
+     * Get a single Feature by id.
+     * @param $idFeature
+     * @return Feature
+     */
+    public function getFeatureById($idFeature)
+    {
+        $sql = 'SELECT * FROM `Feature` 
+            JOIN `Translation` ON `Feature`.`name` = `Translation`.`idTranslation`
+            WHERE `Feature`.`idFeature` = :idFeature
+            AND `Translation`.`idLanguage` = :idLanguage';
+        $parameters = array(
+            'idFeature' => $idFeature,
+            'idLanguage' => $this->language
+        );
+
+        Database::query($sql, $parameters);
+
+        $featureRow = Database::fetch();
+
+        $translation = new Translation;
+        $translation->setIdLanguage($this->language)
+            ->setIdTranslation($featureRow['idTranslation'])
+            ->setTranslation($featureRow['translation']);
+        $feature = new Feature;
+        $feature->setIdFeature($featureRow['idFeature'])
+            ->setName($translation);
+
+        return $feature;
+    }
+
+    /**
      * Get all FeatureValues by the given id feature.
      * @param int $idFeature
      * @return array An array with FeatureValue objects.
@@ -250,7 +292,7 @@ class ProductManager
             $featureValues[] = $featureValue;
         }
 
-        return $featureValue;
+        return $featureValues;
     }
 
     /**
@@ -266,14 +308,7 @@ class ProductManager
             'value' => $featureValue->getValue()
         );
 
-        try {
-            Database::query($sql, $parameters);
-        } catch (Exception $e) {
-            if (Config::getValue('debug')) {
-                throw new Exception($e->getMessage());
-            }
-            return false;
-        }
+        Database::query($sql, $parameters);
 
         $idFeatureValue = Database::getLastInsertId();
 
@@ -290,6 +325,7 @@ class ProductManager
      * Save a new Feature.
      * @param Feature $feature
      * @return bool True on success or false on failure.
+     * @throws Exception
      */
     public function saveFeature(Feature $feature)
     {
@@ -299,14 +335,7 @@ class ProductManager
             'idLanguage' => $this->language
         );
 
-        try {
-            Database::query($sql, $parameters);
-        } catch (Exception $e) {
-            if (Config::getValue('debug')) {
-                throw new Exception($e->getMessage());
-            }
-            return false;
-        }
+        Database::query($sql, $parameters);
 
         $idTranslation = Database::getLastInsertId();
 
@@ -337,26 +366,86 @@ class ProductManager
         return true;
     }
 
+    /**
+     * Get an array of all the features.
+     * @return array An array of Feature objects.
+     */
+    public function getFeatures()
+    {
+        $sql = 'SELECT * FROM `Feature`
+            JOIN `Translation` ON `Feature`.`name` = `Translation`.`idTranslation`
+            ORDER BY `Translation`.`translation`';
+
+        Database::query($sql);
+
+        $features = array();
+
+        while ($featureRow = Database::fetch()) {
+            $features[] = $this->arrayToFeature($featureRow);
+        }
+
+        return $features;
+    }
+
+    /**
+     * Convert an array to a Feature object.
+     * @param array $featureRow
+     * @return Feature
+     */
+    private function arrayToFeature(array $featureRow)
+    {
+        $translation = new Translation;
+        $translation->setIdLanguage($this->language)
+            ->setIdTranslation($featureRow['idTranslation'])
+            ->setTranslation($featureRow['translation']);
+        $feature = new Feature;
+        $feature->setIdFeature($featureRow['idFeature'])
+            ->setName($translation);
+
+        return $feature;
+    }
+
     private function getProductSql()
     {
         $sql = 'SELECT `Product`.`idProduct`, `Product`.`brand`, `Product`.`combinationDiscount`, `Product`.`insertDate`, 
             `Product`.`uri`, `Product`.`active`, `NameTranslation`.`translation` AS `translationName`, 
-            `DescriptionTranslation`.`translation` AS `translationDescription`, `FeatureTranslation`.`translation` AS `featureName`, 
+            `NameTranslation`.`idTranslation` AS `idTranslationName`,
+            `DescriptionTranslation`.`translation` AS `translationDescription`, `DescriptionTranslation`.`idTranslation` AS `idTranslationDescription`, 
+            `FeatureTranslation`.`translation` AS `featureName`, `FeatureTranslation`.`idTranslation` AS `idFeatureName`,
+            `FeatureValue`.`value` AS `featureValue`,
+            `Variation`.* 
+            FROM `Product` 
+            LEFT JOIN `ProductCategory` ON `Product`.`idProduct` = `ProductCategory`.`idCategory`
+            LEFT JOIN `Category` ON `ProductCategory`.`idCategory` = `Category`.`idCategory`
+            LEFT JOIN `Variation` ON `Product`.`idProduct` = `Variation`.`idProduct`
+            LEFT JOIN `VariationFeatureValue` ON `Variation`.`idVariation` = `VariationFeatureValue`.`idVariation`
+            LEFT JOIN `FeatureValue` ON `VariationFeatureValue`.`idFeatureValue` = `FeatureValue`.`idFeatureValue`
+            LEFT JOIN `Feature` ON `FeatureValue`.`idFeature` = `Feature`.`idFeature`
+            LEFT JOIN `Translation` AS `NameTranslation` ON `Product`.`name` = `NameTranslation`.`idTranslation`
+            LEFT JOIN `Translation` AS `DescriptionTranslation` ON `Product`.`description` = `DescriptionTranslation`.`idTranslation`
+            LEFT JOIN `Translation` AS `FeatureTranslation` ON `Feature`.`name` = `FeatureTranslation`.`idTranslation`';
+
+        $sql2 = 'SELECT `Product`.`idProduct`, `Product`.`brand`, `Product`.`combinationDiscount`, `Product`.`insertDate`, 
+            `Product`.`uri`, `Product`.`active`, `NameTranslation`.`translation` AS `translationName`, 
+            `NameTranslation`.`idTranslation` AS `idTranslationName`,
+            `DescriptionTranslation`.`translation` AS `translationDescription`, `DescriptionTranslation`.`idTranslation` AS `idTranslationDescription`, 
+            `FeatureTranslation`.`translation` AS `featureName`, `FeatureTranslation`.`idTranslation` AS `idFeatureName`,
             `Variation`.* 
             FROM `Product` 
             JOIN `ProductCategory` ON `Product`.`idProduct` = `ProductCategory`.`idCategory`
             JOIN `Category` ON `ProductCategory`.`idCategory` = `Category`.`idCategory`
             JOIN `Variation` ON `Product`.`idProduct` = `Variation`.`idProduct`
-            JOIN `VariationFeatureValue` ON `Variation`.`idVariation` = `VariationFeatureValue`.`idVariation`
-            JOIN `FeatureValue` ON `VariationFeatureValue`.`idFeatureValue` = `FeatureValue`.`idFeatureValue`
-            JOIN `Feature` ON `FeatureValue`.`idFeature` = `Feature`.`idFeature`
+            LEFT JOIN `VariationFeatureValue` ON `Variation`.`idVariation` = `VariationFeatureValue`.`idVariation`
+            LEFT JOIN `FeatureValue` ON `VariationFeatureValue`.`idFeatureValue` = `FeatureValue`.`idFeatureValue`
+            LEFT JOIN `Feature` ON `FeatureValue`.`idFeature` = `Feature`.`idFeature`
             JOIN `Translation` AS `NameTranslation` ON `Product`.`name` = `NameTranslation`.`idTranslation`
             LEFT JOIN `Translation` AS `DescriptionTranslation` ON `Product`.`description` = `DescriptionTranslation`.`idTranslation`
             JOIN `Translation` AS `FeatureTranslation` ON `Feature`.`name` = `FeatureTranslation`.`idTranslation` ';
 
         $where = '`NameTranslation`.`idLanguage` = :idLanguage
-            AND `DescriptionTranslation`.`idLanguage` = :idLanguage
-            AND `FeatureTranslation`.`idLanguage` = :idLanguage ';
+            AND (`DescriptionTranslation`.`idLanguage` = :idLanguage OR `DescriptionTranslation`.`idLanguage` IS NULL)
+            AND (`FeatureTranslation`.`idLanguage` = :idLanguage OR `FeatureTranslation`.`idLanguage` IS NULL)
+            AND `Product`.`active` = :active';
 
         return array('sql' => $sql, 'where' => $where);
     }
@@ -366,17 +455,29 @@ class ProductManager
         Database::query($sql, $parameters);
 
         $products = array();
+        $variations = array();
 
+        $key = 1;
+        $rowCount = Database::getRowCount();
+
+//        echo '<pre>';
+//        var_dump(Database::fetchAll());
+//        echo '</pre>';
+//exit;
         while ($product = Database::fetch()) {
-            if (empty($currentId) || $currentId !== $product['idProduct']) {
-                if (!empty($variations)) {
-                    $product['variations'] = $variations;
-                    $products[] = $this->arrayToProduct($product);
-                }
-                $currentId = $product['idProduct'];
-                $variations = array();
+            if (!empty($currentId) && $currentId !== $product['idProduct']) {
+                $product['variations']  = $variations;
+                $products[] = $this->arrayToProduct($product);
             }
+            $currentId = $product['idProduct'];
             $variations[] = $this->arrayToVariation($product);
+
+            if ($key === $rowCount) {
+                // Also add the last product to the list.
+                $product['variations']  = $variations;
+                $products[] = $this->arrayToProduct($product);
+            }
+            $key++;
         }
 
         return $products;
@@ -385,15 +486,29 @@ class ProductManager
     private function arrayToProduct(array $productArray)
     {
         $product = new Product;
+
         $product->setIdProduct($productArray['idProduct'])
             ->setBrand($productArray['brand'])
-            ->setName($productArray['translationName'])
-            ->setDescription($productArray['translationDescription'])
             ->setCombinationDiscount($productArray['combinationDiscount'])
             ->setInsertDate($productArray['insertDate'])
             ->setUri($productArray['uri'])
             ->setActive($productArray['active'])
             ->setVariations($productArray['variations']);
+
+        // Turn the name into a Translation.
+        $name = new Translation;
+        $name->setIdLanguage($product->getLanguage())
+            ->setIdTranslation($productArray['idTranslationName'])
+            ->setTranslation($productArray['translationName']);
+
+        // Turn the description into a Translation.
+        $description = new Translation;
+        $description->setIdLanguage($product->getLanguage())
+            ->setIdTranslation($productArray['idTranslationDescription'])
+            ->setTranslation($productArray['translationDescription']);
+
+        $product->setName($name)
+            ->setDescription($description);
 
         return $product;
     }
@@ -406,19 +521,21 @@ class ProductManager
             ->setStock($variationArray['stock']);
 
         $imageManager = new ImageManager($this->language);
-        $images = $imageManager->getImagesByVariation($variation->getIdVariation());
+        //$images = $imageManager->getImagesByVariation($variation->getIdVariation());
 
-        $variation->setImages($images);
+//        $variation->setImages($images);
 
         return $variation;
     }
 
-    private function insert(Product $product)
+    private function insert(Product $product, array $features)
     {
         $translationManager = new TranslationManager($this->language);
 
-        $idNameTranslation = $translationManager->save($product->getName());
-        $idDescriptionTranslation = $translationManager->save($product->getDescription());
+        $idNameTranslation = $translationManager->save($product->getName()->getTranslation());
+        if ($product->getDescription()) {
+            $idDescriptionTranslation = $translationManager->save($product->getDescription()->getTranslation());
+        }
 
         $sql = 'INSERT INTO `Product` (`brand`, `name`, `description`, `combinationDiscount`, `insertDate`, `URI`, `active`) 
             VALUES(:brand, :name, :description, :combinationDiscount, :insertDate, :URI, :active)';
@@ -444,7 +561,34 @@ class ProductManager
         $product->setIdProduct($idProduct);
 
         $this->saveCategories($product);
-        $this->createVariations($product);
+        $this->createVariations($product, $features);
+
+        return true;
+    }
+
+    private function update(Product $product, array $features = null)
+    {
+        $sql = 'UPDATE `Product` 
+            SET `brand` = :brand, 
+            `combinationDiscount` = :combinationDiscount, 
+            `URI` = :URI, 
+            `active` = :active
+            WHERE `idProduct` = :idProduct';
+        $parameters = array(
+            'brand' => $product->getBrand(),
+            'combinationDiscount' => $product->getCombinationDiscount(),
+            'URI' => $product->getUri(),
+            'active' => $product->getActive(),
+            'idProduct' => $product->getIdProduct()
+        );
+
+        Database::query($sql, $parameters);
+
+        $translationManager = new TranslationManager($this->language);
+
+        // Save the translations.
+        $translationManager->save($product->getName()->getTranslation(), $product->getName()->getIdTranslation());
+        $translationManager->save($product->getDescription()->getTranslation(), $product->getDescription()->getIdTranslation());
 
         return true;
     }
@@ -478,14 +622,19 @@ class ProductManager
      */
     private function createVariations(Product $product, array $features)
     {
-        $variations = array();
+        if (!$features) {
+            $variations = array(0);
+        } else {
+            $variations = array();
+        }
 
         // Go through every feature.
         foreach ($features as $key => $feature) {
+            $feature = array_keys($feature);
             // If no variations are present create the array with the current feature values.
             if (!$variations) {
                 foreach ($feature as $variation) {
-                    $variations[] = array_keys($variation);
+                    $variations[] = array($variation);
                 }
             } else {
                 $variations = $this->addFeatures($feature, $variations);
@@ -518,8 +667,12 @@ class ProductManager
 
             $this->saveImages($product, $idVariation);
 
+
             // Save all relations between the variation and it's feature values.
             foreach ($variation as $idFeatureValue) {
+                if ($idFeatureValue === 0) {
+                    continue;
+                }
                 $variationFeatureValueParameters = array(
                     'idVariation' => $idVariation,
                     'idFeatureValue' => $idFeatureValue
