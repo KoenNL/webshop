@@ -2,6 +2,8 @@
 
 namespace Model\Category;
 
+use Model\Translation\Translation;
+
 class Category
 {
     /**
@@ -13,7 +15,7 @@ class Category
      */
     private $parentCategory;
     /**
-     * @var string
+     * @var Translation
      */
     private $name;
     /**
@@ -64,10 +66,10 @@ class Category
     }
 
     /**
-     * @param string $name
+     * @param Translation $name
      * @return Category $this
      */
-    public function setName($name)
+    public function setName(Translation $name)
     {
         $this->name = $name;
 
@@ -75,7 +77,7 @@ class Category
     }
 
     /**
-     * @return string
+     * @return Translation
      */
     public function getName()
     {

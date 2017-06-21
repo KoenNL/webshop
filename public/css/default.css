@@ -242,3 +242,7 @@ label.required::after {
 table.shopping-cart img {
     margin: 0 10px 0 10px;
 }
+
+.clone {
+    display: none;
+}

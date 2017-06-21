@@ -3,6 +3,8 @@
 namespace Model\Product;
 
 
+use Model\Translation\Translation;
+
 class Feature implements \JsonSerializable
 {
     /**
@@ -13,6 +15,10 @@ class Feature implements \JsonSerializable
      * @var string
      */
     private $name;
+    /**
+     * @var array
+     */
+    private $featureValues = array();
 
     /**
      * @param int $idFeature
@@ -20,7 +26,7 @@ class Feature implements \JsonSerializable
      */
     public function setIdFeature($idFeature)
     {
-        $this->idFeature = (int) $idFeature;
+        $this->idFeature = (int)$idFeature;
 
         return $this;
     }
@@ -34,10 +40,10 @@ class Feature implements \JsonSerializable
     }
 
     /**
-     * @param string $name
+     * @param Translation $name
      * @return Feature $this
      */
-    public function setName($name)
+    public function setName(Translation $name)
     {
         $this->name = $name;
 
@@ -50,6 +56,38 @@ class Feature implements \JsonSerializable
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * @param FeatureValue $featureValue
+     * @return Feature $this
+     */
+    public function addFeatureValue(FeatureValue $featureValue)
+    {
+        $this->featureValues[] = $featureValue;
+
+        return $this;
+    }
+
+    /**
+     * @param array $featureValues
+     * @return Feature $this
+     */
+    public function setFeatureValues(array $featureValues)
+    {
+        foreach ($featureValues as $featureValue) {
+            $this->addFeatureValue($featureValue);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getFeatureValues()
+    {
+        return $this->featureValues;
     }
 
     /**

@@ -51,6 +51,10 @@ class SystemTranslation
             'en' => 'failed to save value to the database',
             'nl' => 'het was niet mogelijk om de waarde op te slaan in de database'
         ),
+        'fatal-error' => array(
+            'en' => 'a fatal error has occurred',
+            'nl' => 'er heeft zich een fatale fout voorgedaan'
+        ),
         'features' => array(
             'en' => 'features',
             'nl' => 'kenmerken'
@@ -75,6 +79,10 @@ class SystemTranslation
             'en' => 'new product',
             'nl' => 'nieuw product'
         ),
+        'new-value' => array(
+            'en' => 'new value',
+            'nl' => 'nieuwe waarde'
+        ),
         'no-results' => array(
             'en' => 'there are no results',
             'nl' => 'er zijn geen resultaten'
@@ -94,6 +102,10 @@ class SystemTranslation
         'product-list' => array(
             'en' => 'product list',
             'nl' => 'productlijst'
+        ),
+        'required-values-missing' => array(
+            'en' => 'required value(s) are missing',
+            'nl' => 'niet alle verplichte velden zijn ingevuld'
         ),
         'save' => array(
             'en' => 'save',

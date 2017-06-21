@@ -6,6 +6,7 @@ use DateTime;
 use Exception;
 use Model\Category\Category;
 use Model\Image\Image;
+use Model\Translation\Translation;
 
 class Product
 {
@@ -18,11 +19,11 @@ class Product
      */
     private $brand;
     /**
-     * @var string
+     * @var Translation
      */
     private $name;
     /**
-     * @var string
+     * @var Translation
      */
     private $description;
     /**
@@ -102,10 +103,10 @@ class Product
     }
 
     /**
-     * @param string $name
+     * @param Translation $name
      * @return Product $this
      */
-    public function setName($name)
+    public function setName(Translation $name)
     {
         $this->name = $name;
 
@@ -113,7 +114,7 @@ class Product
     }
 
     /**
-     * @return string
+     * @return Translation
      */
     public function getName()
     {
@@ -121,10 +122,10 @@ class Product
     }
 
     /**
-     * @param string$description
+     * @param Translation $description
      * @return Product $this
      */
-    public function setDescription($description)
+    public function setDescription(Translation $description)
     {
         $this->description = $description;
 
@@ -132,7 +133,7 @@ class Product
     }
 
     /**
-     * @return string
+     * @return Translation
      */
     public function getDescription()
     {
@@ -151,10 +152,34 @@ class Product
     }
 
     /**
+     * Set the price of this Product by finding the dominant price in it's variations.
+     * @return bool True if a dominant price is found, false if not.
+     */
+    private function setPriceFromVariations()
+    {
+        $prices = array();
+        foreach ($this->variations as $variation) {
+            $prices[] = (string) $variation->getPrice();
+        }
+
+        if ($prices) {
+            $counter= array_flip(array_count_values($prices));
+            sort($counter);
+            $this->setPrice(array_pop($counter));
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * @return float
      */
     public function getPrice()
     {
+        if (!$this->price && $this->variations) {
+            $this->setPriceFromVariations();
+        }
         return $this->price;
     }
 
@@ -305,6 +330,22 @@ class Product
     public function getCategories()
     {
         return $this->categories;
+    }
+
+    /**
+     * Check if the given category is linked to this product.
+     * @param Category $category
+     * @return bool
+     */
+    public function hasCategory(Category $category)
+    {
+        foreach ($this->categories as $savedCategory) {
+            if ($category === $savedCategory) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
