@@ -11,13 +11,16 @@ namespace Controller;
 
 use Main\Controller;
 use Model\User\User;
-use model\user\UserManager;
+use Model\user\UserManager;
+use Model\Translation\TranslationManager;
+use Model\Translation\SystemTranslation;
 
 class UserController extends Controller
 {
+
     public function userAction($idUser = null)
     {
-
+        //$systemTranslation = $controller->getValue('systemTranslation');
         $userManager = new UserManager();
         if ($idUser) {
             $user = $userManager->getUserById($idUser);
@@ -25,47 +28,98 @@ class UserController extends Controller
             $user = new User();
 
         }
+        $systemTranslation = new SystemTranslation($this->getLanguage());
+        $translationManager = new TranslationManager($this->getLanguage());
+
+        $error = '';
+
+        // If the "Save" button has been used.
+        if (!empty($_POST['register'])) {
+            $user->setName(!empty($_POST['name']) ? $_POST['name'] : '')
+                ->setEmailAddress(!empty($_POST['email-address']) ? $_POST['email-address'] : '')
+                ->setPassword(!empty($_POST['password']) ? $_POST['password'] : '')
+                ->setLanguage(!empty($_POST['language']) ? $_POST['language'] : '')
+                ->setAddress(!empty($_POST['address']) ? $_POST['address'] : '')
+                ->setPostalCode(!empty($_POST['postal-code']) ? $_POST['postal-code'] : '')
+                ->setCity(!empty($_POST['city']) ? $_POST['city'] : '')
+                ->setPhoneNumber(!empty($_POST['phone-number']) ? $_POST['phone-number'] : '')
+                ->setType(!empty($_POST['type']) ? $_POST['type'] : '');
+
+
+            if (empty($_POST['name']) || empty($_POST['email-address']) || empty($_POST['password']) || empty($_POST['language']) || empty($_POST['address'])
+                || empty($_POST['postal-code']) || empty($_POST['city']) || empty($_POST['type'])|| empty($_POST['phone-number'])
+            ) {
+                $error = $systemTranslation->translate('required-values-missing');
+            } elseif ($_POST['password'] !== $_POST['password-repeat']) {
+                $error = $systemTranslation->translate('passwords-do-not-match');
+            }
+
+            if (!$error) {
+                // Save the user if there is no error set.
+                if ($userManager->save($user)) {
+                    // Redirect to home
+                    return $this->redirect('page', 'home');
+                }
+                $error = $systemTranslation->translate('failed-to-save');
+            }
+
+
+        }
+        $values = array(
+            'user' => $user,
+            'systemTranslation' => $systemTranslation,
+            'languages' => $translationManager->getLanguages(),
+            'error' => $error
+        );
+
+        return $this->write($values);
     }
 
     public function changePasswordAction($idUser)
     {
+
+        $systemTranslation = new SystemTranslation($this->getLanguage());
+
         $userManager = new UserManager();
         if ($idUser) {
             $user = $userManager->getUserById($idUser);
         } else {
-            return $this->write(array('error' => 'Gebruiker niet gevonden'));
+            return $this->write(array('error' => ucfirst($systemTranslation->translate('user-not-found'))));
 
         }
 
         $currentPassword = $_POST['current-password'];
         if (!$userManager->checkPassword($user, $currentPassword)) {
-            return $this->write(array('error' => 'Wachtwoord onjuist.'));
+            return $this->write(array('error' => ucfirst($systemTranslation->translate('password-incorrect'))));
         }
 
         $password = $_POST['password'];
-        $passwordRepeat = S_POST['password-repeat'];
+        $passwordRepeat = $_POST['password-repeat'];
         if ($password <> $passwordRepeat) {
-            return $this->write(array('error' => 'Wachtwoorden komen niet overeen.'));
+            return $this->write(array('error' => ucfirst($systemTranslation->translate('passwords-do-not-match'))));
         }
 
         $user->setPassword($password);
         $userManager->save($user);
 
-        return $this->write(array('info' => 'U heeft uw wachtwoord succesvol gewijzigd.'));
+        return $this->write(array('info' => ucfirst($systemTranslation->translate('password-changed'))));
     }
 
     public function loginAction()
     {
+        $systemTranslation = new SystemTranslation($this->getLanguage());
+        $this->template->setTemplate(null);
         $userManager = new UserManager();
-                 $user = $userManager->getUserByEmailAddress($_POST);
-         if(!$userManager->checkPassword($user, $_POST['password'])){
-             sleep(5);
-              return $this->write(array('error' => 'Uw e-mail of wachtwoord is onjuist.'));
+        $user = $userManager->getUserByEmailAddress($_POST['email-address']);
+
+        if (!$user || !$userManager->checkPassword($user, $_POST['password'])) {
+            sleep(5);
+            return $this->write(array('error' => ucfirst($systemTranslation->translate('password-email-incorrect'))));
         }
-        $_SESSION['idUser']=$user->getIdUser();
+        $_SESSION['idUser'] = $user->getIdUser();
 
 
-        if ($user->getType()==='admin'){
+        if ($user->getType() === 'admin') {
             return $this->redirect('adminorder', 'orderlist');
         }
         return $this->redirect('page', 'home');

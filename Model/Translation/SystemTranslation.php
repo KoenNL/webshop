@@ -222,7 +222,28 @@ class SystemTranslation
         'delete' => array(
             'en' => 'delete',
             'nl' => 'verwijderen'
+        ),
+        'user-not-found' => array(
+            'en' => 'user not found',
+            'nl' => 'gebruiker niet gevonden'
+        ),
+        'password-incorrect' => array(
+            'en' => 'password incorrect',
+            'nl' => 'wachtwoord onjuist'
+        ),
+        'passwords-do-not-match' => array(
+            'en' => 'passwords do not match',
+            'nl' => 'wachtwoorden komen niet overeen'
+        ),
+        'password-email-incorrect' => array(
+            'en' => 'your e-mail or password is incorrect',
+            'nl' => 'uw e-mail of wachtwoord is onjuist'
+        ),
+        'password-changed' => array(
+            'en' => 'you have succesfully changed your password',
+            'nl' => 'U heeft uw wachtwoord succesvol gewijzigd'
         )
+
 
     );
 

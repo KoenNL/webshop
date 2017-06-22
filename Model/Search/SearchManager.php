@@ -11,12 +11,12 @@ class SearchManager
     /**
      * save Search
      */
-    public function save(Search $Search)
+    public function save(Search $search)
     {
-        if ($Search->getId()) {
-            return $this->update($Search);
+        if ($search->getId()) {
+            return $this->update($search);
         }
-        return $this->insert($Search);
+        return $this->insert($search);
     }
 
     public function getSearchByid($idSearch)
@@ -69,7 +69,7 @@ class SearchManager
         return Database::fetchObject('Model\\Search\\Search');
     }
     private function insert(Search $search) {
-        $sql = 'INSERT INTO `Search`(`idSearch`,`idUser`,`query`,`time`)
+        $sql = 'INSERT INTO `search`(`idSearch`,`idUser`,`query`,`time`)
                 VALUES (:idSearch,:idUser,:query,:time)';
         $parameters = array(
             'idSearch' => $search->getSearch(),
@@ -90,7 +90,7 @@ class SearchManager
         return true;
     }
     private function update(Search $search) {
-        $sql = 'UPDATE `Search` SET
+        $sql = 'UPDATE `search` SET
                 `idSearch` = :idSearch,
                 `idUser` = :idUser,
                 `query` = :query,
