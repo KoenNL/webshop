@@ -20,22 +20,6 @@ class TranslationManager
         $this->idLanguage = $idLanguage;
     }
 
-    /**
-     * Get all languages from the database.
-     * @return array
-     */
-    public function getLanguages()
-    {
-        Database::query('SELECT * FROM `Language`');
-
-        $languages = array();
-
-        while($language = Database::fetch()) {
-            $languages[] = $language;
-        }
-
-        return $languages;
-    }
 
     /**
      * Get a single Translation.

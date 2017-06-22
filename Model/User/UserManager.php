@@ -44,7 +44,10 @@ class UserManager
         return $users;
     }
 
-
+    /**
+     * @param int $idUser
+     * @return User
+     */
     public function getUserByid($idUser)
     {
         $sql = 'SELECT *
@@ -61,6 +64,10 @@ class UserManager
         return Database::fetchObject('Model\\User\\User');
     }
 
+    /**
+     * @param string $emailAddress
+     * @return User
+     */
     public function getUserByEmailAddress($emailAddress)
     {
         $sql = 'SELECT * 
@@ -76,6 +83,18 @@ class UserManager
         //Return a single emailAddress
         return Database::fetchObject('Model\\User\\User');
     }
+
+    /**
+     * Check if the given password is valid.
+     * @param User $user
+     * @param string $password
+     * @return bool
+     */
+    public function checkPassword(User $user, $password)
+    {
+        return password_verify($password, $user->getPassword());
+    }
+
     private function insert(User $user) {
         $sql = 'INSERT INTO `User`(`idUser`,`idLanguage`,`name`,`emailAddress`,`password`,`type`,`address`,`postalCode`,`city`,`phoneNumber`,`active`)
                 VALUES (:idUser,:idLanguage,:name,:emailAddress,:password,:type,:address,:postalCode,:city,:phoneNumber,:active)';
