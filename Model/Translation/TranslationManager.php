@@ -57,6 +57,23 @@ class TranslationManager
     }
 
     /**
+     * Get all languages from the database.
+     * @return array
+     */
+    public function getLanguages()
+    {
+        Database::query('SELECT * FROM `Language`');
+
+        $languages = array();
+
+        while($language = Database::fetch()) {
+            $languages[] = $language;
+        }
+
+        return $languages;
+    }
+
+    /**
      * Save a new translation or update an existing one.
      * @param int $translation
      * @param null $id
