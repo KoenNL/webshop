@@ -6,21 +6,21 @@ if ($product) :
         <div class="col-md-2 col-sm-4">
             <div class="row product-image-thumbnail">
                 <div class="col-sm-12">
-                    <a href="#" title="Grote weergave">
+                    <a href="product/product" title="Grote weergave">
                         <img src="images/Product%20top.jpg" class="img-tiny img-selected">
                     </a>
                 </div>
             </div>
             <div class="row product-image-thumbnail">
                 <div class="col-sm-12">
-                    <a href="#" title="Grote weergave">
+                    <a href="product/product" title="Grote weergave">
                         <img src="images/Product%20top.jpg" class="img-tiny">
                     </a>
                 </div>
             </div>
             <div class="row product-image-thumbnail">
                 <div class="col-sm-12">
-                    <a href="#" title="Grote weergave">
+                    <a href="product/product" title="Grote weergave">
                         <img src="images/Product%20top.jpg" class="img-tiny">
                     </a>
                 </div>

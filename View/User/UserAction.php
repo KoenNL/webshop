@@ -12,7 +12,7 @@ $systemTranslation = $controller->getValue('systemTranslation');
                         <a href="/user/orderlist"><?php echo ucfirst($systemTranslation->translate('my-orders')); ?></a>
                     </li>
                     <li class="dropdown active">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                        <a href="/user/orderlist" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                            aria-expanded="false"><?php echo ucfirst($systemTranslation->translate('my-data')); ?></a>
                         <ul class="dropdown-menu">
                             <li><a href="/user/user"><?php echo ucfirst($systemTranslation->translate('change-data')); ?></a></li>

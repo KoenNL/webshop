@@ -1,19 +1,12 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: steph
- * Date: 22-6-2017
- * Time: 11:13
- */
-
 namespace Controller;
 
+use Main\Controller;
 use Model\Order\Order;
-use Model\OrderLine\Orderline;
 use Model\Order\OrderManager;
 use Model\Translation\SystemTranslation;
 
-class AdminOrderController extends AdminOrderController
+class AdminOrderController extends Controller
 {
 
     public function orderListAction()

@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * User: steph
  * Date: 22-6-2017
- * Time: 14:51
+ * Time: 14:53
  */
 
 namespace Controller;
@@ -11,9 +11,9 @@ namespace Controller;
 
 use Main\Controller;
 
-class SearchController extends Controller
+class Categorycontroller extends Controller
 {
- public function searchAction(){
+ public function productListAction(){
 
  }
 }
