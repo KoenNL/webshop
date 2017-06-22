@@ -77,29 +77,17 @@ class Order
     }
 
     /**
-     * Set the insert date. Date can be either a ISO-8601 string or a DateTime object.
-     * String will be converted to DateTime object.
-     * @param mixed $insertDate
-     * @return Order $this
-     * @throws Exception
+     * @param $insertTime
      */
-    public function setInsertDate($insertDate)
+    public function setInsertTime($insertTime)
     {
-        if (is_string($insertDate)) {
-            $this->insertDate = new DateTime($insertDate);
-        } elseif (is_object($insertDate) && is_a($insertDate, 'DateTime')) {
-            $this->insertDate = $insertDate;
-        } else {
-            throw new Exception('Invalid value set in ' . __METHOD__);
-        }
-
-        return $this;
+        $this->time = $time;
     }
 
     /**
      * @return datetime
      */
-    public function getInsertdate()
+    public function getInserttime()
     {
         return $this->insertdate;
     }
