@@ -12,7 +12,7 @@ use Main\Controller;
 use Model\Order\OrderManager;
 use Model\Translation\SystemTranslation;
 
-class OrderController
+class OrderController extends controller
 {
 
     public function addProductAction($uri)
