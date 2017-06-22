@@ -41,10 +41,10 @@ $systemTranslation = $controller->getValue('systemTranslation');
             <form>
                 <h2>Inloggen</h2>
                 <label for="email" class="sr-only"><?php echo ucfirst($systemTranslation->translate('email-address')); ?></label>
-                <input type="email" class="form-control" name="email" id="email" placeholder="Emailadres" required
+                <input type="email" class="form-control" name="email" id="email" placeholder="<?php echo ucfirst($systemTranslation->translate('email-address')); ?>" required
                        autofocus>
                 <label for="password" class="sr-only"><?php echo ucfirst($systemTranslation->translate('password')); ?></label>
-                <input type="password" class="form-control" name="password" id="password" placeholder="Wachtwoord"
+                <input type="password" class="form-control" name="password" id="password" placeholder="<?php echo ucfirst($systemTranslation->translate('password')); ?>"
                        required>
                 <input type="submit" class="btn btn-primary btn-lg btn-block" name="login" value="<?php echo ucfirst($systemTranslation->translate('login')); ?>">
             </form>

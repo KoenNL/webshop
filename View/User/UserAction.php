@@ -29,11 +29,11 @@ $systemTranslation = $controller->getValue('systemTranslation');
         <form>
             <div class="form-group">
                 <label for="name" class="required"><?php echo ucfirst($systemTranslation->translate('name')); ?></label>
-                <input type="text" name="name" id="name" class="form-control" required>
+                <input type="text" name="name" id="name" class="form-control" value="<?php echo $user->getName(); ?>required>
             </div>
             <div class="form-group">
                 <label for="email-address" class="required"><?php echo ucfirst($systemTranslation->translate('email-address')); ?></label>
-                <input type="email" name="email-address" id="email-address" class="form-control" required>
+                <input type="email" name="email-address" id="email-address" class="form-control" value="<?php echo $user->getEmailAddress(); ?> required>
             </div>
             <div class="form-group">
                 <label for="password" class="required"><?php echo ucfirst($systemTranslation->translate('password')); ?></label>
@@ -53,19 +53,19 @@ $systemTranslation = $controller->getValue('systemTranslation');
             </div>
             <div class="form-group">
                 <label for="address" class="required"><?php echo ucfirst($systemTranslation->translate('address')); ?></label>
-                <input type="text" name="address" id="address" class="form-control" required>
+                <input type="text" name="address" id="address" class="form-control" value="<?php echo $user->getAddress(); ?>required>
             </div>
             <div class="form-group">
                 <label for="postal-code" class="required"><?php echo ucfirst($systemTranslation->translate('postal-code')); ?>Postcode</label>
-                <input type="text" name="postal-code" id="postal-code" class="form-control" max-length="6" required>
+                <input type="text" name="postal-code" id="postal-code" class="form-control" max-length="6" value="<?php echo $user->getpostalCode(); ?> required>
             </div>
             <div class="form-group">
                 <label for="city" class="required"><?php echo ucfirst($systemTranslation->translate('city')); ?></label>
-                <input type="text" name="city" id="city" class="form-control" required>
+                <input type="text" name="city" id="city" class="form-control" value="<?php echo $user->getCity(); ?> required>
             </div>
             <div class="form-group">
                 <label for="phonenumber"><?php echo ucfirst($systemTranslation->translate('phone-number')); ?></label>
-                <input type="text" name="phonenumber" id="phonenumber" class="form-control">
+                <input type="text" name="phonenumber" id="phonenumber" class="form-control" value="<?php echo $user->getPhoneNumber(); ?>>
             </div>
             <div class="form-group">
                 <input type="submit" class="btn btn-primary" name="register" value="<?php echo ucfirst($systemTranslation->translate('register')); ?>">
