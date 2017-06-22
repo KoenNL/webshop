@@ -36,7 +36,7 @@ echo $template->getHeader();
     <div class="col-md-8 col-md-offset-2 col-sm-12">
         <div class="row">
             <div class="col-md-7" id="logo">
-                <a href="?page=home" title="Home"><img src="images/logo.jpeg"></a>
+                <a href="/" title="Home"><img src="/images/logo.jpeg"></a>
             </div>
             <div class="col-md-3" id="search-box">
                 <input type="text" placeholder="Zoeken...">
@@ -91,29 +91,36 @@ echo $template->getHeader();
                 </ul>
                 <ul class="nav navbar-right">
                     <li>
-                        <a href="#" title="Nederlands"><img src="images/flag-english.svg" height="20px"></a>
+                        <a href="#" title="English"><img src="/images/flag-english.svg" height="20px"></a>
                     </li>
                 </ul>
             </div>
         </div>
     </div>
 </div>
-<div class="banner banner-<?php echo strtolower($page); ?>">
-    <h1><?php echo $template->getTitle(); ?></h1>
-    <p class="breadcrumd">
-        <?php
-        $breadcrumbs = $template->getBreadcrumbs();
-        for ($i = 0; $i < count($breadcrumbs); $i++) : ?>
-            <a href="/<?php echo $breadcrumbs[$i]['path']; ?>"><?php echo $breadcrumbs[$i]['title']; ?></a>
-            <?php if ($i + 1 < count($breadcrumbs)) : ?>
-                -&gt;
-            <?php endif; ?>
-        <?php endfor; ?>
-    </p>
-</div>
-<div class="container" id="wrapper">
-    <?php echo $template->getBody(); ?>
-</div>
+<?php if ($template->getTitle() === 'Home') : ?>
+    <div class="home-banner"></div>
+    <div class="container" id="wrapper">
+        <?php echo $template->getBody(); ?>
+    </div>
+<?php else: ?>
+    <div class="banner">
+        <h1><?php echo $template->getTitle(); ?></h1>
+        <p class="breadcrumd">
+            <?php
+            $breadcrumbs = $template->getBreadcrumbs();
+            for ($i = 0; $i < count($breadcrumbs); $i++) : ?>
+                <a href="/<?php echo $breadcrumbs[$i]['path']; ?>"><?php echo $breadcrumbs[$i]['title']; ?></a>
+                <?php if ($i + 1 < count($breadcrumbs)) : ?>
+                    -&gt;
+                <?php endif; ?>
+            <?php endfor; ?>
+        </p>
+    </div>
+    <div class="container" id="wrapper">
+        <?php echo $template->getBody(); ?>
+    </div>
+<?php endif; ?>
 <?php
 // This needs to replace the footer.
 echo $template->getFooter();

@@ -10,6 +10,10 @@ class ImageManager
      * @var int
      */
     private $idLanguage;
+    /**
+     * @var string
+     */
+    private $defaultPath = '/images/products/';
 
     /**
      * ImageManager constructor.
@@ -70,8 +74,9 @@ class ImageManager
 
         $image->setIdImage($imageArray['idImage'])
             ->setName($imageArray['translation'])
-            ->setPath($imageArray['path'])
-            ->setSize($imageArray['size']);
+            ->setPath($this->defaultPath . $imageArray['path'])
+            ->setSize($imageArray['size'])
+            ->setPrimary($imageArray['primary']);
 
         if (!empty($imageArray['originalImage'])) {
             $image->setOriginalImage($imageArray['originalImage']);

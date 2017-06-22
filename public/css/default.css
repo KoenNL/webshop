@@ -125,7 +125,7 @@ img.img-selected {
 }
 
 .home-banner {
-    background: url('images/jeans-banner.jpg') center no-repeat;
+    background: url('/images/jeans-banner.jpg') center no-repeat;
     height: 450px;
 }
 

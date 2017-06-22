@@ -10,7 +10,7 @@ use Model\Translation\SystemTranslation;
 class ProductController extends Controller
 {
 
-    public function productAction($uri)
+    public function productAction($uri = null)
     {
         $productManager = new ProductManager($this->getLanguage());
         $product = $productManager->getProductByUri($uri);
