@@ -87,13 +87,14 @@ class OrderManager
 }
 
 private function update(Order $order) {
-$sql = 'UPDATE `Order` SET
+    /** @var Update $sql */
+    $sql = 'UPDATE' `Order` 'SET'
             `idOrder` = :idOrder,
             `idUser` = :idUser,
             `time` = :time,
             `status` = :status,
             `shippingCosts` = :shippingCosts,
-            WHERE `idOrder` = :idOrder';
+            'WHERE' `idOrder` = :idOrder;
             
 $parameters = array(
             \'idOrder\' => $Order ->getIdOrder(),
