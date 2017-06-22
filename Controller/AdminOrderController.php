@@ -23,7 +23,7 @@ class AdminOrderController extends AdminOrderController
         $orderManager = new OrderManager($this->getLanguage());
 
         if (!empty($_POST['search'])) {
-            $orders = OrderManager::->getOrdersByName($_POST['search']);
+            $orders = $orderManager->getOrdersByName($_POST['search']);
         } else {
             $orders = $orderManager->getOrders();
         }

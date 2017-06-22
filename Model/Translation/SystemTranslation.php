@@ -95,6 +95,14 @@ class SystemTranslation
             'en' => 'price',
             'nl' => 'prijs'
         ),
+        'new-product' => array(
+            'en' => 'new product',
+            'nl' => 'nieuw product'
+        ),
+        'no-results' => array(
+            'en' => 'there are no results',
+            'nl' => 'er zijn geen resultaten'
+        ),
         'product-not-found' => array(
             'en' => 'product not found',
             'nl' => 'product niet gevonden'
@@ -131,6 +139,94 @@ class SystemTranslation
             'en' => 'upload',
             'nl' => 'uploaden'
         ),
+        'change-data' => array(
+            'en' => 'change data',
+            'nl' => 'gegevens wijzigen'
+        ),
+        'change-password' => array(
+            'en' => 'change password',
+            'nl' => 'wachtwoord wijzigen'
+        ),
+        'my-orders' => array(
+            'en' => 'my orders',
+            'nl' => 'mijn bestellingen'
+        ),
+        'password' => array(
+            'en' => 'password',
+            'nl' => 'wachtwoord'
+        ),
+        'email-address' => array(
+            'en' => 'e-mail address',
+            'nl' => 'e-mailadres'
+        ),
+        'repeat-password' => array(
+            'en' => 'repeat password',
+            'nl' => 'herhaal wachtwoord'
+        ),
+        'language' => array(
+            'en' => 'language',
+            'nl' => 'taal'
+        ),
+        'address' => array(
+            'en' => 'address',
+            'nl' => 'adres'
+        ),
+        'postal-code' => array(
+            'en' => 'postal code',
+            'nl' => 'postcode'
+        ),
+        'city' => array(
+            'en' => 'city',
+            'nl' => 'plaats'
+        ),
+        'phone-number' => array(
+            'en' => 'phone number',
+            'nl' => 'telefoonnummer'
+        ),
+        'register' => array(
+            'en' => 'register',
+            'nl' => 'registreer'
+        ),
+        'my-data' => array(
+            'en' => 'my data',
+            'nl' => 'mijn gegevens'
+        ),
+        'current-password' => array(
+            'en' => 'current password',
+            'nl' => 'huidig wachtwoord'
+        ),
+        'edit' => array(
+            'en' => 'edit',
+            'nl' => 'wijzigen'
+        ),
+        'login' => array(
+            'en' => 'login',
+            'nl' => 'inloggen'
+        ),
+        'no-account' => array(
+            'en' => 'no account?',
+            'nl' => 'nog geen account?'
+        ),
+        'type' => array(
+            'en' => 'type',
+            'nl' => 'type'
+        ),
+        'back-to-overview' => array(
+            'en' => 'back to the overview',
+            'nl' => 'terug naar het overzicht'
+        ),
+        'new-user' => array(
+            'en' => 'new user',
+            'nl' => 'nieuwe gebruiker'
+        ),
+        'actions' => array(
+            'en' => 'actions',
+            'nl' => 'acties'
+        ),
+        'delete' => array(
+            'en' => 'delete',
+            'nl' => 'verwijderen'
+        )
     );
 
     /**

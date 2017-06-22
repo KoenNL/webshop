@@ -66,8 +66,8 @@ class OrderManager
     }
 
     private function insert(Order $Order) {
-        $sql = 'INSERT INTO `Order`(`idOrder`,`idUser`,`time`,`status`,`shippingCosts`)'
-                VALUES ('idOrder', 'idUser', 'time', 'status', 'shippingCosts');
+        $sql = 'INSERT INTO `Order`(`idOrder`,`idUser`,`time`,`status`,`shippingCosts`)
+                VALUES (:idOrder, :idUser, :time, :status, :shippingCosts)';
         $parameters = array(
             'idOrder' => $Order ->getIdOrder(),
             'idUser' => $Order ->getIdUser(),
@@ -84,27 +84,26 @@ class OrderManager
         $Order->setIdOrder($idOrder);
         return true;
     }
-}
+
 
 private function update(Order $order) {
     /** @var Update $sql */
-    $sql = 'UPDATE' `Order` 'SET'
+    $sql = 'UPDATE `Order` SET
             `idOrder` = :idOrder,
             `idUser` = :idUser,
             `time` = :time,
             `status` = :status,
             `shippingCosts` = :shippingCosts,
-            'WHERE' `idOrder` = :idOrder;
+            WHERE `idOrder` = :idOrder';
             
 $parameters = array(
-            \'idOrder\' => $Order ->getIdOrder(),
-            \'idUser\' => $Order ->getIdUser(),
-            \'time\' => $Order ->getInserttime(),
-            \'status\' => $Order ->getStatus(),
-            \'shippingCosts\' => $Order ->getShippingCosts());
+            'idOrder' => $Order ->getIdOrder(),
+            'idUser' => $Order ->getIdUser(),
+            'time' => $Order ->getInserttime(),
+            'status' => $Order ->getStatus(),
+            'shippingCosts' => $Order ->getShippingCosts());
 
             database::query($sql,$parameters);
             return true;
 }
-?>
-
+}
