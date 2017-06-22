@@ -30,7 +30,7 @@ $products = $controller->getValue('products');
                     <tr>
                         <td><?php echo $product->getBrand(); ?></td>
                         <td><?php echo $product->getName(); ?></td>
-                        <td>&euro; <?php echo $product->getPrice(); ?></td>
+                        <td>&euro; <?php echo number_format($product->getPrice(), 2, ',', '.'); ?></td>
                         <td>
                             <a href="/adminproduct/product/<?php echo $product->getIdProduct(); ?>"
                                class="btn btn-default" title="Bewerken">

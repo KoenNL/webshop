@@ -392,6 +392,47 @@ class ProductManager
     }
 
     /**
+     * @param int $idVariation
+     * @return Variation
+     */
+    public function getVariationById($idVariation)
+    {
+        $sql = 'SELECT * FROM `Variation` WHERE `idVariation` = :idVariation';
+
+        $parameters = array(
+            'idVariation' => $idVariation
+        );
+
+        Database::query($sql, $parameters);
+
+        return Database::fetchObject('Model\\Product\\Variation');
+    }
+
+    /**
+     * Get a product by it's variation.
+     * @param int $idVariation
+     * @return Product|null
+     */
+    public function getProductByVariation($idVariation)
+    {
+        $productSql = $this->getProductSql();
+
+        $sql = $productSql['sql'] . ' WHERE ' . $productSql['where'];
+
+        $sql .= ' AND `Variation`.`idVariation` = :idVariation';
+
+        $parameters = array(
+            'idLanguage' => $this->language,
+            'active' => true,
+            'idVariation' => $idVariation
+        );
+
+        $result = $this->fetchProducts($sql, $parameters);
+
+        return !empty($result) ? $result[0] : null;
+    }
+
+    /**
      * Convert an array to a Feature object.
      * @param array $featureRow
      * @return Feature
@@ -447,10 +488,6 @@ class ProductManager
         $key = 1;
         $rowCount = Database::getRowCount();
 
-//        echo '<pre>';
-//        var_dump(Database::fetchAll());
-//        echo '</pre>';
-//exit;
         while ($product = Database::fetch()) {
             if (!empty($currentId) && $currentId !== $product['idProduct']) {
                 $product['variations']  = $variations;
@@ -508,8 +545,8 @@ class ProductManager
             ->setStock($variationArray['stock']);
 
         $imageManager = new ImageManager($this->language);
-        //$images = $imageManager->getImagesByVariation($variation->getIdVariation());
-
+//        $images = $imageManager->getImagesByVariation($variation->getIdVariation());
+//
 //        $variation->setImages($images);
 
         return $variation;

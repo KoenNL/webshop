@@ -75,26 +75,6 @@ class SystemTranslation
             'en' => 'a fatal error has occurred',
             'nl' => 'er heeft zich een fatale fout voorgedaan'
         ),
-        'features' => array(
-            'en' => 'features',
-            'nl' => 'kenmerken'
-        ),
-        'general' => array(
-            'en' => 'general',
-            'nl' => 'algemeen'
-        ),
-        'images' => array(
-            'en' => 'images',
-            'nl' => 'afbeeldingen'
-        ),
-        'invalid-value' => array(
-            'en' => 'invalid value',
-            'nl' => 'ongeldige waarde'
-        ),
-        'name' => array(
-            'en' => 'name',
-            'nl' => 'naam'
-        ),
         'new-product' => array(
             'en' => 'new product',
             'nl' => 'nieuw product'
@@ -107,17 +87,9 @@ class SystemTranslation
             'en' => 'new value',
             'nl' => 'nieuwe waarde'
         ),
-        'no-results' => array(
-            'en' => 'there are no results',
-            'nl' => 'er zijn geen resultaten'
-        ),
-        'price' => array(
-            'en' => 'price',
-            'nl' => 'prijs'
-        ),
-        'new-product' => array(
-            'en' => 'new product',
-            'nl' => 'nieuw product'
+        'no-product-set' => array(
+            'en' => 'no product set',
+            'nl' => 'geen product gegeven'
         ),
         'no-results' => array(
             'en' => 'there are no results',

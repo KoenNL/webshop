@@ -3,14 +3,8 @@
 namespace Model\Order;
 
 use DateTime;
-use exception;
+use Model\OrderLine\OrderLine;
 
-/**
- * Created by PhpStorm.
- * User: steph
- * Date: 8-6-2017
- * Time: 11:30
- */
 class Order
 {
     /**
@@ -26,7 +20,7 @@ class Order
     /**
      * @var datetime
      */
-    private $insertdate;
+    private $insertTime;
 
     /**
      * @var string
@@ -37,6 +31,11 @@ class Order
      * @var float
      */
     private $shippingCosts;
+
+    /**
+     * @var array
+     */
+    private $orderLines = array();
 
     /**
      * @param int $idOrder
@@ -77,19 +76,22 @@ class Order
     }
 
     /**
-     * @param $insertTime
+     * @param DateTime $insertTime
+     * @return Order
      */
-    public function setInsertTime($insertTime)
+    public function setInsertTime(DateTime $insertTime)
     {
-        $this->time = $time;
+        $this->insertTime = $insertTime;
+
+        return $this;
     }
 
     /**
-     * @return datetime
+     * @return DateTime
      */
-    public function getInserttime()
+    public function getInsertTime()
     {
-        return $this->insertdate;
+        return $this->insertTime;
     }
 
     /**
@@ -99,6 +101,8 @@ class Order
     public function setStatus($status)
     {
         $this->status = $status;
+
+        return $this;
     }
 
     /**
@@ -116,6 +120,8 @@ class Order
     public function setShippingCosts($shippingCosts)
     {
         $this->shippingCosts = $shippingCosts;
+
+        return $this;
     }
 
     /**
@@ -124,5 +130,29 @@ class Order
     public function getShippingCosts()
     {
         return $this->shippingCosts;
+    }
+
+    /**
+     * @param OrderLine $orderLine
+     * @return Order $this
+     */
+    public function addOrderLine(OrderLine $orderLine)
+    {
+        $this->orderLines[] = $orderLine;
+
+        return $this;
+    }
+
+    /**
+     * @param array $orderLines
+     * @return Order $this
+     */
+    public function setOrderLines(array $orderLines)
+    {
+        foreach ($orderLines as $orderLine) {
+            $this->addOrderLine($orderLine);
+        }
+
+        return $this;
     }
 }

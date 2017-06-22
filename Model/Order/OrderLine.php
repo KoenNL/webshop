@@ -2,12 +2,6 @@
 
 namespace Model\OrderLine;
 
-/**
- * Created by PhpStorm.
- * User: steph
- * Date: 8-6-2017
- * Time: 11:31
- */
 class OrderLine
 {
 
@@ -47,7 +41,9 @@ class OrderLine
      */
     public function setIdOrderLine($idOrderLine)
     {
-        $this->idOrderLine = $idOrderLine;
+        $this->idOrderLine = (int)$idOrderLine;
+
+        return $this;
     }
 
     /**
@@ -64,7 +60,9 @@ class OrderLine
      */
     public function setIdOrder($idOrder)
     {
-        $this->idOrder = $idOrder;
+        $this->idOrder = (int)$idOrder;
+
+        return $this;
     }
 
     /**
@@ -81,7 +79,9 @@ class OrderLine
      */
     public function setIdVariation($idVariation)
     {
-        $this->idVariation = $idVariation;
+        $this->idVariation = (int)$idVariation;
+
+        return $this;
     }
 
     /**
@@ -98,7 +98,9 @@ class OrderLine
      */
     public function setAmount($amount)
     {
-        $this->amount = $amount;
+        $this->amount = floatval($amount);
+
+        return $this;
     }
 
     /**
@@ -115,7 +117,9 @@ class OrderLine
      */
     public function setPrice($price)
     {
-        $this->price = $price;
+        $this->price = floatval($price);
+
+        return $this;
     }
 
     /**
@@ -132,7 +136,9 @@ class OrderLine
      */
     public function setTax($tax)
     {
-        $this->tax = $tax;
+        $this->tax = floatval($tax);
+
+        return $this;
     }
 
     /**

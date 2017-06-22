@@ -61,7 +61,7 @@ if ($product) :
                 </div>
                 <div class="row">
                     <div class="col-sm-12">
-                        <p class="product-price-large">&euro; 79,95</p>
+                        <p class="product-price-large">&euro; <?php echo number_format($product->getPrice(), 2, ',', '.'); ?></p>
                     </div>
                 </div>
                 <div class="row">
