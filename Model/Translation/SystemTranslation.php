@@ -79,6 +79,10 @@ class SystemTranslation
             'en' => 'new product',
             'nl' => 'nieuw product'
         ),
+        'new-products' => array(
+            'en' => 'new products',
+            'nl' => 'nieuwe producten'
+        ),
         'new-value' => array(
             'en' => 'new value',
             'nl' => 'nieuwe waarde'

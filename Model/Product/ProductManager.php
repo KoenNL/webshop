@@ -128,11 +128,14 @@ class ProductManager
 
         $sql = $productSql['sql'];
 
-        $sql .= 'WHERE `Product`.`idProduct` = :idProduct';
+        $sql .= 'WHERE `Product`.`idProduct` = :idProduct AND ';
+
+        $sql .= $productSql['where'];
 
         $parameters = array(
             'idProduct' => (int)$idProduct,
-            'active' => true
+            'active' => true,
+            'idLanguage' => $this->language
         );
 
         $products = $this->fetchProducts($sql, $parameters);
@@ -149,7 +152,7 @@ class ProductManager
     public function getProductByUri($uri)
     {
         if (empty($uri) || !is_string($uri)) {
-            throw new Exception('Invalid value ' . $uri . ' set for uri in ' . __METHOD__);
+            return null;
         }
         // Get the basic product SQL
         $productSql = $this->getProductSql();
@@ -183,13 +186,14 @@ class ProductManager
 
         $productSql = $this->getProductSql();
 
-        $sql = $productSql['sql'];
+        $sql = $productSql['sql'] . ' WHERE ' . $productSql['where'];
 
-        $sql .= 'ORDER BY `Product`.`insertDate` ASC LIMIT :limit';
+        $sql .= ' ORDER BY `Product`.`insertDate` ASC LIMIT :limit';
 
         $parameters = array(
             'limit' => $limit,
-            'active' => true
+            'active' => true,
+            'idLanguage' => $this->language
         );
 
         return $this->fetchProducts($sql, $parameters);
@@ -415,24 +419,7 @@ class ProductManager
             `FeatureValue`.`value` AS `featureValue`,
             `Variation`.* 
             FROM `Product` 
-            LEFT JOIN `ProductCategory` ON `Product`.`idProduct` = `ProductCategory`.`idCategory`
-            LEFT JOIN `Category` ON `ProductCategory`.`idCategory` = `Category`.`idCategory`
-            LEFT JOIN `Variation` ON `Product`.`idProduct` = `Variation`.`idProduct`
-            LEFT JOIN `VariationFeatureValue` ON `Variation`.`idVariation` = `VariationFeatureValue`.`idVariation`
-            LEFT JOIN `FeatureValue` ON `VariationFeatureValue`.`idFeatureValue` = `FeatureValue`.`idFeatureValue`
-            LEFT JOIN `Feature` ON `FeatureValue`.`idFeature` = `Feature`.`idFeature`
-            LEFT JOIN `Translation` AS `NameTranslation` ON `Product`.`name` = `NameTranslation`.`idTranslation`
-            LEFT JOIN `Translation` AS `DescriptionTranslation` ON `Product`.`description` = `DescriptionTranslation`.`idTranslation`
-            LEFT JOIN `Translation` AS `FeatureTranslation` ON `Feature`.`name` = `FeatureTranslation`.`idTranslation`';
-
-        $sql2 = 'SELECT `Product`.`idProduct`, `Product`.`brand`, `Product`.`combinationDiscount`, `Product`.`insertDate`, 
-            `Product`.`uri`, `Product`.`active`, `NameTranslation`.`translation` AS `translationName`, 
-            `NameTranslation`.`idTranslation` AS `idTranslationName`,
-            `DescriptionTranslation`.`translation` AS `translationDescription`, `DescriptionTranslation`.`idTranslation` AS `idTranslationDescription`, 
-            `FeatureTranslation`.`translation` AS `featureName`, `FeatureTranslation`.`idTranslation` AS `idFeatureName`,
-            `Variation`.* 
-            FROM `Product` 
-            JOIN `ProductCategory` ON `Product`.`idProduct` = `ProductCategory`.`idCategory`
+            JOIN `ProductCategory` ON `Product`.`idProduct` = `ProductCategory`.`idProduct`
             JOIN `Category` ON `ProductCategory`.`idCategory` = `Category`.`idCategory`
             JOIN `Variation` ON `Product`.`idProduct` = `Variation`.`idProduct`
             LEFT JOIN `VariationFeatureValue` ON `Variation`.`idVariation` = `VariationFeatureValue`.`idVariation`
@@ -440,7 +427,7 @@ class ProductManager
             LEFT JOIN `Feature` ON `FeatureValue`.`idFeature` = `Feature`.`idFeature`
             JOIN `Translation` AS `NameTranslation` ON `Product`.`name` = `NameTranslation`.`idTranslation`
             LEFT JOIN `Translation` AS `DescriptionTranslation` ON `Product`.`description` = `DescriptionTranslation`.`idTranslation`
-            JOIN `Translation` AS `FeatureTranslation` ON `Feature`.`name` = `FeatureTranslation`.`idTranslation` ';
+            LEFT JOIN `Translation` AS `FeatureTranslation` ON `Feature`.`name` = `FeatureTranslation`.`idTranslation`';
 
         $where = '`NameTranslation`.`idLanguage` = :idLanguage
             AND (`DescriptionTranslation`.`idLanguage` = :idLanguage OR `DescriptionTranslation`.`idLanguage` IS NULL)

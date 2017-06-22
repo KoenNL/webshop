@@ -381,6 +381,20 @@ class Product
     }
 
     /**
+     * @return Image|null
+     */
+    public function getPrimaryImage()
+    {
+        foreach ($this->images as $image) {
+            if ($image->getPrimary()) {
+                return $image;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * @param int $language
      * @return Product $this
      */

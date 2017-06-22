@@ -24,6 +24,10 @@ class Image
      */
     private $size;
     /**
+     * @var bool
+     */
+    private $primary = false;
+    /**
      * An array with all the sizes that are available for an image.
      * @var array
      */
@@ -117,6 +121,25 @@ class Image
     public function getSize()
     {
         return $this->size;
+    }
+
+    /**
+     * @param bool $primary
+     * @return Image $this
+     */
+    public function setPrimary($primary)
+    {
+        $this->primary = (bool)$primary;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getPrimary()
+    {
+        return $this->primary;
     }
 
     /**

@@ -30,7 +30,7 @@
             </div>
             <div class="form-group">
                 <label for="price" class="required"><?php echo ucfirst($systemTranslation->translate('price')); ?></label>
-                <input type="text" class="form-control" id="price" name="price" value="<?php echo $product->getPrice(); ?>" required>
+                <input type="text" class="form-control" id="price" name="price" value="<?php echo number_format($product->getPrice(), 2, ',', '.'); ?>" required>
             </div>
             <div class="form-group">
                 <label for="description"><?php echo ucfirst($systemTranslation->translate('description')); ?></label>
