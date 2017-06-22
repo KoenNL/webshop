@@ -15,13 +15,85 @@ class SystemTranslation
      * @var array
      */
     private $translations = array(
+        'add-feature' => array(
+            'en' => 'add feature',
+            'nl' => 'kenmerk toevoegen'
+        ),
+        'back-to-summary' => array(
+            'en' => 'back to summary',
+            'nl' => 'terug naar overzicht'
+        ),
+        'brand' => array(
+            'en' => 'brand',
+            'nl' => 'merk'
+        ),
+        'categories' => array(
+            'en' => 'categories',
+            'nl' => 'categorie&euml;n'
+        ),
+        'close' => array(
+            'en' => 'close',
+            'nl' => 'sluiten'
+        ),
+        'combination-discount' => array(
+            'en' => 'combination discount',
+            'nl' => 'combinatiekorting'
+        ),
+        'description' => array(
+            'en' => 'description',
+            'nl' => 'omschrijving'
+        ),
+        'edit' => array(
+            'en' => 'edit',
+            'nl' => 'wijzigen'
+        ),
+        'failed-to-save' => array(
+            'en' => 'failed to save value to the database',
+            'nl' => 'het was niet mogelijk om de waarde op te slaan in de database'
+        ),
+        'fatal-error' => array(
+            'en' => 'a fatal error has occurred',
+            'nl' => 'er heeft zich een fatale fout voorgedaan'
+        ),
+        'features' => array(
+            'en' => 'features',
+            'nl' => 'kenmerken'
+        ),
+        'general' => array(
+            'en' => 'general',
+            'nl' => 'algemeen'
+        ),
+        'images' => array(
+            'en' => 'images',
+            'nl' => 'afbeeldingen'
+        ),
+        'invalid-value' => array(
+            'en' => 'invalid value',
+            'nl' => 'ongeldige waarde'
+        ),
+        'name' => array(
+            'en' => 'name',
+            'nl' => 'naam'
+        ),
         'new-product' => array(
             'en' => 'new product',
             'nl' => 'nieuw product'
         ),
+        'new-products' => array(
+            'en' => 'new products',
+            'nl' => 'nieuwe producten'
+        ),
+        'new-value' => array(
+            'en' => 'new value',
+            'nl' => 'nieuwe waarde'
+        ),
         'no-results' => array(
             'en' => 'there are no results',
             'nl' => 'er zijn geen resultaten'
+        ),
+        'price' => array(
+            'en' => 'price',
+            'nl' => 'prijs'
         ),
         'product-not-found' => array(
             'en' => 'product not found',
@@ -35,6 +107,10 @@ class SystemTranslation
             'en' => 'product list',
             'nl' => 'productlijst'
         ),
+        'required-values-missing' => array(
+            'en' => 'required value(s) are missing',
+            'nl' => 'niet alle verplichte velden zijn ingevuld'
+        ),
         'save' => array(
             'en' => 'save',
             'nl' => 'opslaan'
@@ -42,7 +118,19 @@ class SystemTranslation
         'search' => array(
             'en' => 'search',
             'nl' => 'zoeken'
-        )
+        ),
+        'select' => array(
+            'en' => 'select',
+            'nl' => 'selecteren'
+        ),
+        'to-variations' => array(
+            'en' => 'to variations',
+            'nl' => 'naar variaties'
+        ),
+        'upload' => array(
+            'en' => 'upload',
+            'nl' => 'uploaden'
+        ),
     );
 
     /**

@@ -125,7 +125,7 @@ img.img-selected {
 }
 
 .home-banner {
-    background: url('images/jeans-banner.jpg') center no-repeat;
+    background: url('/images/jeans-banner.jpg') center no-repeat;
     height: 450px;
 }
 
@@ -241,4 +241,8 @@ label.required::after {
 
 table.shopping-cart img {
     margin: 0 10px 0 10px;
+}
+
+.clone {
+    display: none;
 }

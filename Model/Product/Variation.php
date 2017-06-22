@@ -25,6 +25,10 @@ class Variation
     private $images = array();
 
     /**
+     * @var array
+     */
+    private $featureValues = array();
+    /**
      * @param int $idVariation
      * @return Variation $this
      */
@@ -111,6 +115,38 @@ class Variation
     public function getImages()
     {
         return $this->images;
+    }
+
+    /**
+     * @param FeatureValue $featureValue
+     * @return Variation $this
+     */
+    public function addFeatureValue(FeatureValue $featureValue)
+    {
+        $this->featureValues[] = $featureValue;
+
+        return $this;
+    }
+
+    /**
+     * @param array $featureValues
+     * @return Variation $this
+     */
+    public function setFeatureValues(array $featureValues)
+    {
+        foreach ($featureValues as $featureValue) {
+            $this->addFeatureValue($featureValue);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getFeatureValues()
+    {
+        return $this->featureValues;
     }
 
 }

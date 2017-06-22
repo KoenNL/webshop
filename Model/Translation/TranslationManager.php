@@ -13,11 +13,47 @@ class TranslationManager
 
     /**
      * TranslationManager constructor.
-     * @param int $idLanguage
+     * @param string $idLanguage
      */
     public function __construct($idLanguage)
     {
-        $this->idLanguage = (int)$idLanguage;
+        $this->idLanguage = $idLanguage;
+    }
+
+    /**
+     * Get all languages from the database.
+     * @return array
+     */
+    public function getLanguages()
+    {
+        Database::query('SELECT * FROM `Language`');
+
+        $languages = array();
+
+        while($language = Database::fetch()) {
+            $languages[] = $language;
+        }
+
+        return $languages;
+    }
+
+    /**
+     * Get a single Translation.
+     * @param int $idTranslation
+     * @param string|null $idLanguage Optional language. Default language will be used if not set.
+     * @return object
+     */
+    public function getTranslation($idTranslation, $idLanguage = null)
+    {
+        $sql = 'SELECT * FROM `Translation` WHERE `idTranslation` = :idTranslation AND `idLanguage` = :idLanguage';
+        $parameters = array(
+            'idTranslation' => $idTranslation,
+            'idLanguage' => !empty($idLanguage) ? $idLanguage : $this->idLanguage
+        );
+
+        Database::query($sql, $parameters);
+
+        return Database::fetchObject('Model\\Translation\\Translation');
     }
 
     /**

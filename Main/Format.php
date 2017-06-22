@@ -28,4 +28,14 @@ class Format
     {
         return str_replace(array("\r\n", "\r", "\n", ' '), '', $string);
     }
+
+    /**
+     * Convert a string to a URI friendly one.
+     * @param string $string
+     * @return string
+     */
+    public static function toUri($string)
+    {
+        return strtolower(str_replace('/', '-', str_replace(' ', '-', $string)));
+    }
 }

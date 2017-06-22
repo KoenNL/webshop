@@ -6,5 +6,9 @@ try {
     $loader = new Main\Loader();
     $loader->run($_SERVER['REQUEST_URI']);
 } catch (Exception $e) {
-    exit($e->getMessage());
+    if (Main\Config::getValue('debug')) {
+        exit($e->getMessage());
+    }
+    $systemTranslation = new \Model\Translation\SystemTranslation(Main\Config::getValue('translation.defaultLanguage'));
+    exit($systemTranslation->translate('fatal-error'));
 }
