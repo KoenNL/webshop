@@ -65,27 +65,27 @@ echo $template->getHeader();
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                            aria-expanded="false">Herenmode</a>
                         <ul class="dropdown-menu">
-                            <li><a href="?page=category">Jeans</a></li>
-                            <li><a href="?page=category">Shirts</a></li>
-                            <li><a href="?page=category">Schoenen</a></li>
+                            <li><a href="/category/productlist">Jeans</a></li>
+                            <li><a href="/category/productlist">Shirts</a></li>
+                            <li><a href="/category/productlist">Schoenen</a></li>
                         </ul>
                     </li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                            aria-expanded="false">Damesmode</a>
                         <ul class="dropdown-menu">
-                            <li><a href="?page=category">Rokken</a></li>
-                            <li><a href="?page=category">Tops</a></li>
-                            <li><a href="?page=category">Schoenen</a></li>
+                            <li><a href="/category/productlist">Rokken</a></li>
+                            <li><a href="/category/productlist">Tops</a></li>
+                            <li><a href="/category/productlist">Schoenen</a></li>
                         </ul>
                     </li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                            aria-expanded="false">Tienermode</a>
                         <ul class="dropdown-menu">
-                            <li><a href="?page=category">Jeans</a></li>
-                            <li><a href="?page=category">Shirts</a></li>
-                            <li><a href="?page=category">Schoenen</a></li>
+                            <li><a href="/category/productlist">Jeans</a></li>
+                            <li><a href="/category/productlist">Shirts</a></li>
+                            <li><a href="/category/productlist">Schoenen</a></li>
                         </ul>
                     </li>
                 </ul>

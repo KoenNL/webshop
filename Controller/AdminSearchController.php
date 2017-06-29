@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: steph
- * Date: 22-6-2017
- * Time: 14:45
- */
 
 namespace Controller;
 
@@ -14,7 +8,19 @@ use Main\Controller;
 class AdminSearchController extends Controller
 {
 
-    public function SearchListAction(){
+    public function searchListAction()
+    {
+        $this->template->setTemplate('admin');
+        $this->template->setTitle('Zoekopdrachten');
+        return $this->write(array());
+    }
 
+    public function searchResultsAction()
+    {
+        $this->template->setTemplate('admin');
+        $this->template->setTitle('Zoekresultaat');
+        $this->template->addBreadcrumb('/adminsearch/searchlist', 'zoekopdrachten');
+        $this->template->addBreadcrumb('/adminsearch/searchresults', 'zoekresultaat');
+        return $this->write(array());
     }
 }

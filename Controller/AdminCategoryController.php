@@ -1,18 +1,15 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: steph
- * Date: 22-6-2017
- * Time: 14:46
- */
 
 namespace Controller;
 
 
-class AdminCategoryController
+use Main\Controller;
+
+class AdminCategoryController extends Controller
 {
 
     public function categoryListAction (){
-
+        $this->template->setTemplate('admin');
+        return $this->write(array());
     }
 }
