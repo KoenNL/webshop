@@ -4,14 +4,14 @@
             <div class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
                     <li class="active">
-                        <a href="page=orderList">Mijn Bestellingen</a>
+                        <a href="page=orderList"><?php echo ucfirst($systemTranslation->translate('my-orders')); ?></a>
                     </li>
                     <li class="dropdown">
                         <a href="/Order/Orderlist" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                           aria-expanded="false">Mijn Gegevens</a>
+                           aria-expanded="false"><?php echo ucfirst($systemTranslation->translate('my-data')); ?></a>
                         <ul class="dropdown-menu">
-                            <li><a href="/user/change">Gegevens wijzigen</a></li>
-                            <li><a href="?page=password">Wachtwoord wijzigen</a></li>
+                            <li><a href="/user/change"><?php echo ucfirst($systemTranslation->translate('change-data')); ?></a></li>
+                            <li><a href="?page=password"><?php echo ucfirst($systemTranslation->translate('change-password')); ?></a></li>
                         </ul>
                     </li>
                 </ul>
@@ -36,7 +36,7 @@
                 <td>&euro; 286,75</td>
                 <td>Betaald</td>
                 <td>
-                    <a class="btn btn-default btn-sm" href="?page=order" title="Bestelling inzien">
+                    <a class="btn btn-default btn-sm" href="?page=order" title="<?php echo ucfirst($systemTranslation->translate('view-order')); ?>">
                         <span class="glyphicon glyphicon-eye-open"></span>
                     </a>
                 </td>
@@ -46,7 +46,7 @@
                 <td>&euro; 178,98</td>
                 <td>Besteld</td>
                 <td>
-                    <a class="btn btn-default btn-sm" href="?page=order" title="Bestelling inzien">
+                    <a class="btn btn-default btn-sm" href="?page=order" title="<?php echo ucfirst($systemTranslation->translate('view-order')); ?>">
                         <span class="glyphicon glyphicon-eye-open"></span>
                     </a>
                 </td>
@@ -56,7 +56,7 @@
                 <td>&euro; 76,54</td>
                 <td>Verzonden</td>
                 <td>
-                    <a class="btn btn-default btn-sm" href="?page=order" title="Bestelling inzien">
+                    <a class="btn btn-default btn-sm" href="?page=order" title="<?php echo ucfirst($systemTranslation->translate('view-order')); ?>">
                         <span class="glyphicon glyphicon-eye-open"></span>
                     </a>
                 </td>
@@ -66,7 +66,7 @@
                 <td>&euro; 24,99</td>
                 <td>Verzonden</td>
                 <td>
-                    <a class="btn btn-default btn-sm" href="?page=order" title="Bestelling inzien">
+                    <a class="btn btn-default btn-sm" href="?page=order" title="<?php echo ucfirst($systemTranslation->translate('view-order')); ?>">
                         <span class="glyphicon glyphicon-eye-open"></span>
                     </a>
                 </td>
@@ -76,7 +76,7 @@
                 <td>&euro; 87,98</td>
                 <td>Verzonden</td>
                 <td>
-                    <a class="btn btn-default btn-sm" href="?page=order" title="Bestelling inzien">
+                    <a class="btn btn-default btn-sm" href="?page=order" title="<?php echo ucfirst($systemTranslation->translate('view-order')); ?>">
                         <span class="glyphicon glyphicon-eye-open"></span>
                     </a>
                 </td>

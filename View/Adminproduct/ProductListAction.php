@@ -33,14 +33,14 @@ $products = $controller->getValue('products');
                         <td>&euro; <?php echo number_format($product->getPrice(), 2, ',', '.'); ?></td>
                         <td>
                             <a href="/adminproduct/product/<?php echo $product->getIdProduct(); ?>"
-                               class="btn btn-default" title="Bewerken">
+                               class="btn btn-default" title="<?php echo ucfirst($controller->getValue('edit')); ?>">
                                 <span class="glyphicon glyphicon-edit"></span>
                             </a>
                             <a href="/adminproduct/product/<?php echo $product->getIdProduct(); ?>"
-                               class="btn btn-default" title="Vertalen">
+                               class="btn btn-default" title="<?php echo ucfirst($controller->getValue('translate')); ?>">
                                 <span class="glyphicon glyphicon-globe"></span>
                             </a>
-                            <button type="button" class="btn btn-danger" title="Verwijderen"
+                            <button type="button" class="btn btn-danger" title="<?php echo ucfirst($controller->getValue('delete')); ?>"
                                     data-id="<?php echo $product->getIdProduct(); ?>">
                                 <span class="glyphicon glyphicon-remove"></span>
                             </button>

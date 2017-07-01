@@ -11,7 +11,7 @@
 <form method="post" action="/adminproduct/product">
     <div class="row">
         <div class="form-group">
-            <label for="language">Taal</label>
+            <label for="language"><?php echo ucfirst($controller->getValue('language')); ?></label>
             <select id="language" name="language" class="selectpicker">
                 <?php foreach ($controller->getValue('languages') as $language) : ?>
                     <option value="<?php echo $language['idLanguage']; ?>"><?php echo $language['name']; ?></option>

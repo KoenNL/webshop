@@ -4,14 +4,14 @@
             <div class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
                     <li class="active">
-                        <a href="?page=orderList">Mijn Bestellingen</a>
+                        <a href="?page=orderList"><?php echo ucfirst($systemTranslation->translate('my-orders')); ?></a>
                     </li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                           aria-expanded="false">Mijn Gegevens</a>
+                           aria-expanded="false"><?php echo ucfirst($systemTranslation->translate('my-data')); ?></a>
                         <ul class="dropdown-menu">
-                            <li><a href="?page=user">Gegevens wijzigen</a></li>
-                            <li><a href="?page=password">Wachtwoord wijzigen</a></li>
+                            <li><a href="?page=user"><?php echo ucfirst($systemTranslation->translate('change-data')); ?></a></li>
+                            <li><a href="?page=password"><?php echo ucfirst($systemTranslation->translate('change-password')); ?></a></li>
                         </ul>
                     </li>
                 </ul>

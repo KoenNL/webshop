@@ -53,7 +53,7 @@ $systemTranslation = $controller->getValue('systemTranslation');
     <hr>
     <div class="row">
         <div class="col-md-4 col-md-offset-4 col-sm-12 text-center">
-            <p><?php echo ucfirst($systemTranslation->translate('no-account')); ?><a href="../index.php?page=register" title="Registreer"><?php echo ucfirst($systemTranslation->translate('register')); ?></a></p>
+            <p><?php echo ucfirst($systemTranslation->translate('no-account')); ?><a href="../index.php?page=register" title="<?php echo ucfirst($systemTranslation->translate('register')); ?>"></a></p>
         </div>
     </div>
 </div>
