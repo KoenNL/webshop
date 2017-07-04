@@ -2,70 +2,79 @@
 
 namespace Controller;
 
+use Main\Config;
 use Main\Controller;
 use Model\Order\Order;
 use Model\Order\OrderManager;
-use Model\OrderLine\OrderLine;
+use Model\Order\OrderLine;
 use Model\Product\ProductManager;
+use Model\Shop\ShopManager;
 use Model\Translation\SystemTranslation;
 use \DateTime;
 
 class OrderController extends Controller
 {
 
-    public function addProductAction($idVariation = null)
+    public function addProductAction($idProduct = null)
     {
         $systemTranslation = new SystemTranslation($this->getLanguage());
-        if (!$idVariation) {
+        if (!$idProduct) {
             $_SESSION['error'] = $systemTranslation->translate('no-product-set');
             return $this->redirect('order', 'cart');
         }
 
         $productManager = new ProductManager($this->getLanguage());
 
-        $variation = $productManager->getVariationById($idVariation);
+        $features = !empty($_POST['features']) ? $_POST['features'] : array();
+
+        $variation = $productManager->getVariationByFeatures($idProduct, $features);
+        $variation->setFeatureValues($productManager->getFeatureValuesByVariation($variation->getIdVariation()));
+        $product = $productManager->getProductById($idProduct);
+        $product->setSelectedVariation($variation);
+
+        $shopManager = new ShopManager;
+        $shop = $shopManager->getShopById(Config::getValue('idShop'));
 
         if (!$variation) {
             $_SESSION['error'] = $systemTranslation->translate('product-does-not-exist');
             return $this->redirect('order', 'cart');
         }
 
-        $_SESSION['cart'][] = $variation->getIdVariation();
-
-        if (empty($_SESSION['idUser'])) {
-            return $this->redirect('order', 'cart');
-        }
-
-        $orderManager = new OrderManager($this->getLanguage());
-
-        if (!empty($_SESSION['idOrder'])) {
-            $order = $orderManager->getOrderById($_SESSION['idOrder']);
-        } else {
+        if (empty($_SESSION['order'])) {
             $order = new Order;
-            $order->setIdUser($_SESSION['idUser'])
-                ->setInsertTime(new DateTime)
-                ->setShippingCosts(0)
+            $order->setInsertTime(new DateTime)
+                ->setShippingCosts($shop->getShippingCosts())
+                ->setShippingCostsThreshold($shop->getShippingCostsThreshold())
                 ->setStatus('cart');
-
-            if (!$orderManager->save($order)) {
-                $_SESSION['error'] = $systemTranslation->translate('could-not-save');
-                return $this->redirect('order', 'cart');
-            }
+        } else {
+            $order = $_SESSION['order'];
         }
 
         $orderLine = new OrderLine;
         $orderLine->setIdOrder($order->getIdOrder())
-            ->setIdVariation($variation->getIdVariation())
+            ->setProduct($product)
             ->setPrice($variation->getPrice())
             ->setAmount(1)
-            ->setTax(0);
+            ->setTax($shop->getDefaultTax());
 
-        // Reinitialize the order lines in the order so that only the new order line will be saved.
-        $order->setOrderLines(array());
-        // Save the order and the new order line.
+        // Add the new order line.
         $order->addOrderLine($orderLine);
 
-        $orderManager->save($order);
+        $_SESSION['order'] = $order;
+
+        // If the user hasn't logged in; return without saving.
+        if (empty($_SESSION['user'])) {
+            return $this->redirect('order', 'cart');
+        }
+
+        $order->setIdUser($_SESSION['user']->getIdUser());
+
+        $orderManager = new OrderManager($this->getLanguage());
+
+        if (!$orderManager->save($order)) {
+            $_SESSION['error'] = $systemTranslation->translate('could-not-save');
+            return $this->redirect('order', 'cart');
+        }
 
         return $this->redirect('order', 'cart');
     }
@@ -79,24 +88,13 @@ class OrderController extends Controller
             $error = '';
         }
 
-        $productManager = new ProductManager($this->getLanguage());
-        $products = array();
-
-        if (!empty($_SESSION['cart'])) {
-            foreach ($_SESSION['cart'] as $idVariation) {
-                $product = $productManager->getProductByVariation($idVariation);
-            }
-        }
-
-        $orderManager = new OrderManager($this->getLanguage());
-
-        if (!empty($_SESSION['idOrder'])) {
-            $order = $orderManager->getOrderById($_SESSION['idOrder']);
-        } else {
+        if (empty($_SESSION['order'])) {
             $order = new Order;
             $order->setInsertTime(new DateTime)
                 ->setShippingCosts(0)
                 ->setStatus('cart');
+        } else {
+            $order = $_SESSION['order'];
         }
 
         $systemTranslation = new SystemTranslation($this->getLanguage());
@@ -104,13 +102,48 @@ class OrderController extends Controller
         $this->template->setTitle(ucfirst($systemTranslation->translate('cart')));
         $this->template->addBreadcrumb('order/cart', $systemTranslation->translate('cart'));
 
+        $shopManager = new ShopManager;
+        $shop = $shopManager->getShopById(Config::getValue('idShop'));
+
         $values = array(
             'error' => $error,
-            'products' => $products,
             'order' => $order,
-            'systemTranslation' => $systemTranslation
+            'shop' => $shop,
+            'systemTranslation' => $systemTranslation,
         );
 
         return $this->write($values);
+    }
+
+    public function changeOrderLineAmountAction()
+    {
+        // Force JSON output.
+        $this->setExtension('json');
+
+        $systemTranslation = new SystemTranslation($this->getLanguage());
+
+        if (empty($_POST['idVariation']) || empty($_SESSION['order'])) {
+            $_SESSION['error'] = $systemTranslation->translate('invalid-values');
+            return $this->write(array('redirect' => '/order/cart'));
+        }
+
+        $idVariation = (int) $_POST['idVariation'];
+        $order = $_SESSION['order'];
+
+        foreach ($order->getOrderLines() as $orderLine) {
+            if ($orderLine->getProduct()->getSelectedVariation()->getIdVariation() === $idVariation) {
+                if (empty($_POST['amount']) || $_POST['amount'] <= 0) {
+                    $order->removeOrderLine($orderLine);
+                } else {
+                    $orderLine->setAmount($_POST['amount']);
+                    $order->removeOrderLine($orderLine);
+                    $order->addOrderLine($orderLine);
+                }
+            }
+        }
+
+        $_SESSION['order'] = $order;
+
+        return $this->write(array('redirect' => '/order/cart'));
     }
 }

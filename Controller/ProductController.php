@@ -19,8 +19,10 @@ class ProductController extends Controller
 
         if ($product) {
             $title = $product->getBrand() . ' ' . $product->getName();
+            $features = $productManager->getFeaturesByProduct($product->getIdProduct());
         } else {
             $title = ucfirst($systemTranslation->translate('product-not-found'));
+            $features = array();
         }
 
         $this->template->setTitle($title);
@@ -29,6 +31,7 @@ class ProductController extends Controller
 
         $values = array(
             'product' => $product,
+            'features' => $features,
             'title' => $title,
             'notFound' => $systemTranslation->translate('product-not-found-explanation')
         );

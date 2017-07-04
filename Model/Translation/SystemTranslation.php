@@ -19,6 +19,10 @@ class SystemTranslation
             'en' => 'add feature',
             'nl' => 'kenmerk toevoegen'
         ),
+        'amount' => array(
+            'en' => 'amount',
+            'nl' => 'aantal'
+        ),
         'back-to-summary' => array(
             'en' => 'back to summary',
             'nl' => 'terug naar overzicht'
@@ -26,6 +30,14 @@ class SystemTranslation
         'brand' => array(
             'en' => 'brand',
             'nl' => 'merk'
+        ),
+        'cart' => array(
+            'en' => 'shopping cart',
+            'nl' => 'winkelwagen'
+        ),
+        'cart-is-empty' => array(
+            'en' => 'your shopping cart is empty',
+            'nl' => 'uw winkelwagen is leeg'
         ),
         'categories' => array(
             'en' => 'categories',
@@ -38,6 +50,14 @@ class SystemTranslation
         'combination-discount' => array(
             'en' => 'combination discount',
             'nl' => 'combinatiekorting'
+        ),
+        'continue-order' => array(
+            'en' => 'continue order',
+            'nl' => 'verder met bestellen'
+        ),
+        'continue-shopping' => array(
+            'en' => 'continue shopping',
+            'nl' => 'verder winkelen'
         ),
         'description' => array(
             'en' => 'description',
@@ -67,6 +87,10 @@ class SystemTranslation
             'en' => 'invalid value',
             'nl' => 'ongeldige waarde'
         ),
+        'login-register' => array(
+            'en' => 'login/register',
+            'nl' => 'inloggen/registreren'
+        ),
         'name' => array(
             'en' => 'name',
             'nl' => 'naam'
@@ -95,9 +119,21 @@ class SystemTranslation
             'en' => 'there are no results',
             'nl' => 'er zijn geen resultaten'
         ),
+        'payment' => array(
+            'en' => 'payment',
+            'nl' => 'betaling'
+        ),
         'price' => array(
             'en' => 'price',
             'nl' => 'prijs'
+        ),
+        'price-per-piece' => array(
+            'en' => 'price per piece',
+            'nl' => 'prijs per stuk'
+        ),
+        'product' => array(
+            'en' => 'product',
+            'nl' => 'product'
         ),
         'product-not-found' => array(
             'en' => 'product not found',
@@ -126,6 +162,26 @@ class SystemTranslation
         'select' => array(
             'en' => 'select',
             'nl' => 'selecteren'
+        ),
+        'shipping-cost' => array(
+            'en' => 'shipping cost',
+            'nl' => 'verzendkosten'
+        ),
+        'shipping-costs-free-at' => array(
+            'en' => 'shipping costs are free on an order above',
+            'nl' => 'verzendkosten zijn gratis op een bestelling boven'
+        ),
+        'subtotal' => array(
+            'en' => 'subtotal',
+            'nl' => 'subtotaal'
+        ),
+        'summary' => array(
+            'en' => 'summary',
+            'nl' => 'overzicht'
+        ),
+        'total' => array(
+            'en' => 'total',
+            'nl' => 'totaal'
         ),
         'to-variations' => array(
             'en' => 'to variations',
@@ -190,10 +246,6 @@ class SystemTranslation
         'current-password' => array(
             'en' => 'current password',
             'nl' => 'huidig wachtwoord'
-        ),
-        'edit' => array(
-            'en' => 'edit',
-            'nl' => 'wijzigen'
         ),
         'login' => array(
             'en' => 'login',

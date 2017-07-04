@@ -1,6 +1,8 @@
 <?php
 
-namespace Model\OrderLine;
+namespace Model\Order;
+
+use Model\Product\Product;
 
 class OrderLine
 {
@@ -16,9 +18,9 @@ class OrderLine
     private $idOrder;
 
     /**
-     * @var int
+     * @var Product
      */
-    private $idVariation;
+    private $product;
 
     /**
      * @var float
@@ -74,22 +76,22 @@ class OrderLine
     }
 
     /**
-     * @param int $idVariation
+     * @param Product $product
      * @return OrderLine $this
      */
-    public function setIdVariation($idVariation)
+    public function setProduct(Product $product)
     {
-        $this->idVariation = (int)$idVariation;
+        $this->product = $product;
 
         return $this;
     }
 
     /**
-     * @return int
+     * @return Product
      */
-    public function getIdVariation()
+    public function getProduct()
     {
-        return $this->idVariation;
+        return $this->product;
     }
 
     /**

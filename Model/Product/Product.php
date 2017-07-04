@@ -52,6 +52,10 @@ class Product
      */
     private $variations = array();
     /**
+     * @var Variation
+     */
+    private $selectedVariation;
+    /**
      * @var array
      */
     private $categories = array();
@@ -146,6 +150,10 @@ class Product
      */
     public function setPrice($price)
     {
+        // If decimal separator is a comma, replace it with a decimal point.
+        if (strpos($price, ',') !== false) {
+            $price = str_replace(',', '.', $price);
+        }
         $this->price = floatval($price);
 
         return $this;
@@ -301,6 +309,25 @@ class Product
     }
 
     /**
+     * @param Variation $variation
+     * @return Product $this
+     */
+    public function setSelectedVariation(Variation $variation)
+    {
+        $this->selectedVariation = $variation;
+
+        return $this;
+    }
+
+    /**
+     * @return Variation
+     */
+    public function getSelectedVariation()
+    {
+        return $this->selectedVariation;
+    }
+
+    /**
      * @param Category $category
      * @return Product $this
      */
@@ -377,6 +404,14 @@ class Product
      */
     public function getImages()
     {
+        if (empty($this->images) && !empty($this->variations)) {
+            foreach ($this->variations as $variation) {
+                if ($variation->getImages()) {
+                    $this->images = $variation->getImages();
+                    return $this->images;
+                }
+            }
+        }
         return $this->images;
     }
 
@@ -385,7 +420,7 @@ class Product
      */
     public function getPrimaryImage()
     {
-        foreach ($this->images as $image) {
+        foreach ($this->getImages() as $image) {
             if ($image->getPrimary()) {
                 return $image;
             }

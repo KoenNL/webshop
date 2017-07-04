@@ -15,7 +15,7 @@ class UserManager
 {
     public function save(User $user)
     {
-        if ($user->getId()) {
+        if ($user->getIdUser()) {
             return $this->update($user);
         }
         return $this->insert($user);
@@ -35,9 +35,9 @@ class UserManager
 
         $users = array();
 
-        Database::query($sql);
+        $statement = Database::query($sql);
         // Return a mutiple user
-        while ($user = Database::fetchObject('Model\\User\\User')) {
+        while ($user = Database::fetchObject($statement, 'Model\\User\\User')) {
             $users[] = $user;
         }
 
@@ -58,10 +58,10 @@ class UserManager
             'idUser' => $idUser
         );
 
-        Database::query($sql, $parameters);
+        $statement = Database::query($sql, $parameters);
 
         // Return a single user
-        return Database::fetchObject('Model\\User\\User');
+        return Database::fetchObject($statement, 'Model\\User\\User');
     }
 
     /**
@@ -78,10 +78,10 @@ class UserManager
             'emailAddress' => $emailAddress
         );
 
-        Database::query($sql, $parameters);
+        $statement = Database::query($sql, $parameters);
 
         //Return a single emailAddress
-        return Database::fetchObject('Model\\User\\User');
+        return Database::fetchObject($statement, 'Model\\User\\User');
     }
 
     /**
@@ -112,7 +112,7 @@ class UserManager
             'active' => $user->getActive()
 
         );
-        Database::query($sql, $parameters);
+        $statement = Database::query($sql, $parameters);
         $idUser = Database::getLastInsertId();
         if (!$idUser) {
             return false;

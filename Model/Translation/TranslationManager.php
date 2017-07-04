@@ -20,6 +20,22 @@ class TranslationManager
         $this->idLanguage = $idLanguage;
     }
 
+    /**
+     * Get all languages from the database.
+     * @return array
+     */
+    public function getLanguages()
+    {
+        $statement = Database::query('SELECT * FROM `Language`');
+
+        $languages = array();
+
+        while($language = Database::fetch($statement)) {
+            $languages[] = $language;
+        }
+
+        return $languages;
+    }
 
     /**
      * Get a single Translation.
@@ -35,9 +51,9 @@ class TranslationManager
             'idLanguage' => !empty($idLanguage) ? $idLanguage : $this->idLanguage
         );
 
-        Database::query($sql, $parameters);
+        $statement = Database::query($sql, $parameters);
 
-        return Database::fetchObject('Model\\Translation\\Translation');
+        return Database::fetchObject($statement, 'Model\\Translation\\Translation');
     }
 
     /**
@@ -56,7 +72,7 @@ class TranslationManager
                 'translation' => $translation
             );
 
-            Database::query($sql, $parameters);
+            $statement = Database::query($sql, $parameters);
 
             return Database::getLastInsertId();
         }
@@ -71,7 +87,7 @@ class TranslationManager
             'idTranslation' => $id
         );
 
-        Database::query($sql, $parameters);
+        $statement = Database::query($sql, $parameters);
 
         return (int) $id;
     }

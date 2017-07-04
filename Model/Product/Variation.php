@@ -23,7 +23,6 @@ class Variation
      * @var array
      */
     private $images = array();
-
     /**
      * @var array
      */

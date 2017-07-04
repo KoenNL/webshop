@@ -1,15 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Freek
- * Date: 8-6-2017
- * Time: 13:12
- */
 
 namespace Controller;
 
-
+use Main\Config;
 use Main\Controller;
+use Model\Shop\ShopManager;
 use Model\User\User;
 use Model\user\UserManager;
 use Model\Translation\TranslationManager;
@@ -20,21 +15,26 @@ class UserController extends Controller
 
     public function userAction($idUser = null)
     {
-        //$systemTranslation = $controller->getValue('systemTranslation');
         $userManager = new UserManager();
         if ($idUser) {
             $user = $userManager->getUserById($idUser);
         } else {
             $user = new User();
-
+            $user->setActive(true);
         }
         $systemTranslation = new SystemTranslation($this->getLanguage());
         $translationManager = new TranslationManager($this->getLanguage());
 
         $error = '';
 
+        if (!empty($_SESSION['user'])) {
+            $this->template->setTitle(ucfirst($systemTranslation->translate('my-data')));
+        } else {
+            $this->template->setTitle(ucfirst($systemTranslation->translate('register')));
+        }
+
         // If the "Save" button has been used.
-        if (!empty($_POST['register'])) {
+        if (!empty($_POST['save'])) {
             $user->setName(!empty($_POST['name']) ? $_POST['name'] : '')
                 ->setEmailAddress(!empty($_POST['email-address']) ? $_POST['email-address'] : '')
                 ->setPassword(!empty($_POST['password']) ? $_POST['password'] : '')
@@ -47,8 +47,7 @@ class UserController extends Controller
 
 
             if (empty($_POST['name']) || empty($_POST['email-address']) || empty($_POST['password']) || empty($_POST['language']) || empty($_POST['address'])
-                || empty($_POST['postal-code']) || empty($_POST['city']) || empty($_POST['type'])|| empty($_POST['phone-number'])
-            ) {
+                || empty($_POST['postal-code']) || empty($_POST['city'])) {
                 $error = $systemTranslation->translate('required-values-missing');
             } elseif ($_POST['password'] !== $_POST['password-repeat']) {
                 $error = $systemTranslation->translate('passwords-do-not-match');
@@ -63,12 +62,16 @@ class UserController extends Controller
                 $error = $systemTranslation->translate('failed-to-save');
             }
 
-
         }
+
+        $shopManager = new ShopManager();
+        $shop = $shopManager->getShopById(Config::getValue('idShop'));
+
         $values = array(
             'user' => $user,
             'systemTranslation' => $systemTranslation,
             'languages' => $translationManager->getLanguages(),
+            'idLanguage' => $shop->getIdLanguage(),
             'error' => $error
         );
 
@@ -110,19 +113,29 @@ class UserController extends Controller
         $systemTranslation = new SystemTranslation($this->getLanguage());
         $this->template->setTemplate(null);
         $userManager = new UserManager();
-        $user = $userManager->getUserByEmailAddress($_POST['email-address']);
+        $user = $userManager->getUserByEmailAddress($_POST['login-email-address']);
 
-        if (!$user || !$userManager->checkPassword($user, $_POST['password'])) {
-            sleep(5);
+        if (!$user || !$userManager->checkPassword($user, $_POST['login-password'])) {
+            sleep(3);
             return $this->write(array('error' => ucfirst($systemTranslation->translate('password-email-incorrect'))));
         }
-        $_SESSION['idUser'] = $user->getIdUser();
-
+        $_SESSION['user'] = $user;
 
         if ($user->getType() === 'admin') {
             return $this->redirect('adminorder', 'orderlist');
         }
         return $this->redirect('page', 'home');
+    }
+
+    public function logOffAction()
+    {
+        if (empty($_SESSION['user'])) {
+            $this->redirect('page', 'home');
+        }
+
+        unset($_SESSION['user']);
+
+        $this->redirect('page', 'home');
     }
 
 }

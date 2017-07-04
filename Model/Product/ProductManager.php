@@ -6,6 +6,7 @@ use Exception;
 use Main\Config;
 use Main\Database;
 use Main\Format;
+use Model\Category\Category;
 use Model\Image\ImageManager;
 use Model\Translation\Translation;
 use Model\Translation\TranslationManager;
@@ -76,7 +77,7 @@ class ProductManager
         $parameters['idLanguage'] = $this->language;
         $parameters['active'] = true;
 
-        Database::query($sql, $parameters);
+        $statement = Database::query($sql, $parameters);
 
         $products = $this->fetchProducts($sql, $parameters);
 
@@ -188,15 +189,14 @@ class ProductManager
 
         $sql = $productSql['sql'] . ' WHERE ' . $productSql['where'];
 
-        $sql .= ' ORDER BY `Product`.`insertDate` ASC LIMIT :limit';
+        $sql .= ' AND `Product`.`idProduct` ORDER BY `Product`.`insertDate` DESC';
 
         $parameters = array(
-            'limit' => $limit,
             'active' => true,
             'idLanguage' => $this->language
         );
 
-        return $this->fetchProducts($sql, $parameters);
+        return $this->fetchProducts($sql, $parameters, $limit);
     }
 
     /**
@@ -263,9 +263,9 @@ class ProductManager
             'idLanguage' => $this->language
         );
 
-        Database::query($sql, $parameters);
+        $statement = Database::query($sql, $parameters);
 
-        $featureRow = Database::fetch();
+        $featureRow = Database::fetch($statement);
 
         $translation = new Translation;
         $translation->setIdLanguage($this->language)
@@ -288,11 +288,34 @@ class ProductManager
         $sql = 'SELECT * FROM `FeatureValue` WHERE `idFeature` = :idFeature';
         $parameters = array('idFeature' => $idFeature);
 
-        Database::query($sql, $parameters);
+        $statement = Database::query($sql, $parameters);
 
         $featureValues = array();
 
-        while ($featureValue = Database::fetchObject('Model\\Product\\FeatureValue')) {
+        while ($featureValue = Database::fetchObject($statement, 'Model\\Product\\FeatureValue')) {
+            $featureValues[] = $featureValue;
+        }
+
+        return $featureValues;
+    }
+
+    /**
+     * Get all FeatureValues by the given id variation.
+     * @param int $idVariation
+     * @return array An array with FeatureValue objects.
+     */
+    public function getFeatureValuesByVariation($idVariation)
+    {
+        $sql = 'SELECT * FROM `FeatureValue` 
+          JOIN `VariationFeatureValue` ON `FeatureValue`.`idFeatureValue` = `VariationFeatureValue`.`idFeatureValue`
+          WHERE `VariationFeatureValue`.`idVariation` = :idVariation';
+        $parameters = array('idVariation' => $idVariation);
+
+        $statement = Database::query($sql, $parameters);
+
+        $featureValues = array();
+
+        while ($featureValue = Database::fetchObject($statement, 'Model\\Product\\FeatureValue')) {
             $featureValues[] = $featureValue;
         }
 
@@ -312,7 +335,7 @@ class ProductManager
             'value' => $featureValue->getValue()
         );
 
-        Database::query($sql, $parameters);
+        $statement = Database::query($sql, $parameters);
 
         $idFeatureValue = Database::getLastInsertId();
 
@@ -339,7 +362,7 @@ class ProductManager
             'idLanguage' => $this->language
         );
 
-        Database::query($sql, $parameters);
+        $statement = Database::query($sql, $parameters);
 
         $idTranslation = Database::getLastInsertId();
 
@@ -351,7 +374,7 @@ class ProductManager
         $featureParameters = array('name' => $idTranslation);
 
         try {
-            Database::query($sqlFeature, $featureParameters);
+            $statement = Database::query($sqlFeature, $featureParameters);
         } catch (Exception $e) {
             if (Config::getValue('debug')) {
                 throw new Exception($e->getMessage());
@@ -380,11 +403,11 @@ class ProductManager
             JOIN `Translation` ON `Feature`.`name` = `Translation`.`idTranslation`
             ORDER BY `Translation`.`translation`';
 
-        Database::query($sql);
+        $statement = Database::query($sql);
 
         $features = array();
 
-        while ($featureRow = Database::fetch()) {
+        while ($featureRow = Database::fetch($statement)) {
             $features[] = $this->arrayToFeature($featureRow);
         }
 
@@ -403,9 +426,36 @@ class ProductManager
             'idVariation' => $idVariation
         );
 
-        Database::query($sql, $parameters);
+        $statement = Database::query($sql, $parameters);
 
-        return Database::fetchObject('Model\\Product\\Variation');
+        return Database::fetchObject($statement, 'Model\\Product\\Variation');
+    }
+
+    /**
+     * Get a variation that belongs to the given product and has the given features.
+     * @param $idProduct
+     * @param array $features
+     * @return Variation
+     */
+    public function getVariationByFeatures($idProduct, array $features)
+    {
+        if (!$features) {
+            return null;
+        }
+
+        $sql = 'SELECT `Variation`.* FROM `Variation`';
+        $parameters = array('idProduct' => $idProduct);
+        foreach ($features as $idFeature => $idFeatureValue) {
+            $sql .= 'JOIN `VariationFeatureValue` AS `VariationFeatureValue' . $idFeature . '` 
+                ON `Variation`.`idVariation` = `VariationFeatureValue' . $idFeature . '`.`idVariation`
+                AND `VariationFeatureValue' . $idFeature . '`.`idFeatureValue` = :idFeatureValue' . $idFeature;
+            $parameters['idFeatureValue' . $idFeature] = $idFeatureValue;
+        }
+        $sql .= ' WHERE `Variation`.`idProduct` = :idProduct';
+
+        $statement = Database::query($sql, $parameters);
+
+        return Database::fetchObject($statement, 'Model\\Product\\Variation');
     }
 
     /**
@@ -429,7 +479,58 @@ class ProductManager
 
         $result = $this->fetchProducts($sql, $parameters);
 
-        return !empty($result) ? $result[0] : null;
+        $product = !empty($result) ? $result[0] : null;
+
+        if (!$product) {
+            return null;
+        }
+
+        $variation = $this->getVariationById($idVariation);
+        $variation->setFeatureValues($this->getFeatureValuesByVariation($idVariation));
+
+        $product->setSelectedVariation($variation);
+
+        return $product;
+    }
+
+
+    public function getFeaturesByProduct($idProduct)
+    {
+        $sql = 'SELECT * FROM `Feature`
+          JOIN `FeatureValue` ON `Feature`.`idFeature` = `FeatureValue`.`idFeature`
+          JOIN `Translation` ON `Feature`.`name` = `Translation`.`idTranslation`
+          JOIN `VariationFeatureValue` ON `FeatureValue`.`idFeatureValue` = `VariationFeatureValue`.`idFeatureValue`
+          JOIN `Variation` ON `VariationFeatureValue`.`idVariation` = `Variation`.`idVariation`
+          WHERE `Variation`.`idProduct` = :idProduct';
+
+        $parameters = array(
+            'idProduct' => $idProduct
+        );
+
+        $statement = Database::query($sql, $parameters);
+
+        $features = array();
+
+        while ($feature = Database::fetch($statement)) {
+            if (empty($features[$feature['idFeature']])) {
+                $translation = new Translation;
+                $translation->setIdLanguage($this->language)
+                    ->setIdTranslation($feature['idTranslation'])
+                    ->setTranslation($feature['translation']);
+                $features[$feature['idFeature']] = new Feature;
+                $features[$feature['idFeature']]->setIdFeature($feature['idFeature'])
+                    ->setName($translation);
+            }
+
+            $featureValue = new FeatureValue;
+            $featureValue->setIdFeature($feature['idFeature'])
+                ->setIdFeatureValue($feature['idFeatureValue'])
+                ->setValue($feature['value']);
+
+            $features[$feature['idFeature']]->addFeatureValue($featureValue);
+        }
+
+        return $features;
     }
 
     /**
@@ -457,7 +558,9 @@ class ProductManager
             `NameTranslation`.`idTranslation` AS `idTranslationName`,
             `DescriptionTranslation`.`translation` AS `translationDescription`, `DescriptionTranslation`.`idTranslation` AS `idTranslationDescription`, 
             `FeatureTranslation`.`translation` AS `featureName`, `FeatureTranslation`.`idTranslation` AS `idFeatureName`,
-            `FeatureValue`.`value` AS `featureValue`,
+            `FeatureValue`.`value` AS `featureValue`, `CategoryTranslation`.`translation` AS `categoryTranslation`,
+            `CategoryTranslation`.`idTranslation` AS `idCategoryTranslation`, `Category`.`idCategory`, `Category`.`position`,
+            `NameTranslation`.`idLanguage`,
             `Variation`.* 
             FROM `Product` 
             JOIN `ProductCategory` ON `Product`.`idProduct` = `ProductCategory`.`idProduct`
@@ -467,10 +570,12 @@ class ProductManager
             LEFT JOIN `FeatureValue` ON `VariationFeatureValue`.`idFeatureValue` = `FeatureValue`.`idFeatureValue`
             LEFT JOIN `Feature` ON `FeatureValue`.`idFeature` = `Feature`.`idFeature`
             JOIN `Translation` AS `NameTranslation` ON `Product`.`name` = `NameTranslation`.`idTranslation`
+            JOIN `Translation` AS `CategoryTranslation` ON `Category`.`name` = `CategoryTranslation`.`idTranslation`
             LEFT JOIN `Translation` AS `DescriptionTranslation` ON `Product`.`description` = `DescriptionTranslation`.`idTranslation`
             LEFT JOIN `Translation` AS `FeatureTranslation` ON `Feature`.`name` = `FeatureTranslation`.`idTranslation`';
 
         $where = '`NameTranslation`.`idLanguage` = :idLanguage
+            AND `CategoryTranslation`.`idLanguage` = :idLanguage
             AND (`DescriptionTranslation`.`idLanguage` = :idLanguage OR `DescriptionTranslation`.`idLanguage` IS NULL)
             AND (`FeatureTranslation`.`idLanguage` = :idLanguage OR `FeatureTranslation`.`idLanguage` IS NULL)
             AND `Product`.`active` = :active';
@@ -478,28 +583,53 @@ class ProductManager
         return array('sql' => $sql, 'where' => $where);
     }
 
-    private function fetchProducts($sql, array $parameters = null)
+    private function fetchProducts($sql, array $parameters = null, $limit = null)
     {
-        Database::query($sql, $parameters);
+        $statement = Database::query($sql, $parameters);
 
         $products = array();
         $variations = array();
+        $categories = array();
 
         $key = 1;
-        $rowCount = Database::getRowCount();
+        $rowCount = Database::getRowCount($statement);
 
-        while ($product = Database::fetch()) {
-            if (!empty($currentId) && $currentId !== $product['idProduct']) {
-                $product['variations']  = $variations;
-                $products[] = $this->arrayToProduct($product);
+        while ($product = Database::fetch($statement)) {
+            if (!empty($currentProduct['idProduct']) && $currentProduct['idProduct'] !== $product['idProduct']) {
+                $currentProduct['variations'] = $variations;
+                $currentProduct['categories'] = $categories;
+                $products[] = $this->arrayToProduct($currentProduct);
+                $variations = array();
+                $categories = array();
             }
-            $currentId = $product['idProduct'];
-            $variations[] = $this->arrayToVariation($product);
+            $currentProduct = $product;
+
+            if (empty($variations[$product['idVariation']])) {
+                $variations[$product['idVariation']] = $this->arrayToVariation($product);
+            }
+
+            if (empty($categories[$product['idCategory']])) {
+                $category = new Category;
+                $categoryName = new Translation;
+                $categoryName->setIdLanguage($product['idLanguage'])
+                    ->setIdTranslation($product['idCategoryTranslation'])
+                    ->setTranslation($product['categoryTranslation']);
+                $category->setIdCategory($product['idCategory'])
+                    ->setName($categoryName)
+                    ->setPosition($product['position']);
+                $categories[$product['idCategory']] = $category;
+            }
 
             if ($key === $rowCount) {
                 // Also add the last product to the list.
-                $product['variations']  = $variations;
+                $product['variations'] = $variations;
+                $product['categories'] = $categories;
                 $products[] = $this->arrayToProduct($product);
+                $variations = array();
+                $categories = array();
+            }
+            if ($limit && count($products) === $limit) {
+                return $products;
             }
             $key++;
         }
@@ -534,6 +664,14 @@ class ProductManager
         $product->setName($name)
             ->setDescription($description);
 
+        foreach ($productArray['variations'] as $variation) {
+            $product->addVariation($variation);
+        }
+
+        foreach ($productArray['categories'] as $category) {
+            $product->addCategory($category);
+        }
+
         return $product;
     }
 
@@ -545,9 +683,9 @@ class ProductManager
             ->setStock($variationArray['stock']);
 
         $imageManager = new ImageManager($this->language);
-//        $images = $imageManager->getImagesByVariation($variation->getIdVariation());
-//
-//        $variation->setImages($images);
+        $images = $imageManager->getImagesByVariation($variation->getIdVariation());
+
+        $variation->setImages($images);
 
         return $variation;
     }
@@ -574,7 +712,7 @@ class ProductManager
             'active' => $product->getActive()
         );
 
-        Database::query($sql, $parameters);
+        $statement = Database::query($sql, $parameters);
 
         $idProduct = Database::getLastInsertId();
 
@@ -606,7 +744,7 @@ class ProductManager
             'idProduct' => $product->getIdProduct()
         );
 
-        Database::query($sql, $parameters);
+        $statement = Database::query($sql, $parameters);
 
         $translationManager = new TranslationManager($this->language);
 
@@ -681,7 +819,7 @@ class ProductManager
             );
 
             // Save the variation.
-            Database::query($variationSql, $variationParameters);
+            $statement = Database::query($variationSql, $variationParameters);
 
             $idVariation = Database::getLastInsertId();
 
@@ -702,7 +840,7 @@ class ProductManager
                     'idFeatureValue' => $idFeatureValue
                 );
 
-                Database::query($variationFeatureValueSql, $variationFeatureValueParameters);
+                $statement = Database::query($variationFeatureValueSql, $variationFeatureValueParameters);
             }
         }
 
@@ -721,7 +859,7 @@ class ProductManager
         foreach ($product->getCategories() as $category) {
             $parameters['idCategory'] = $category->getIdCategory();
 
-            Database::query($sql, $parameters);
+            $statement = Database::query($sql, $parameters);
         }
 
         return true;
@@ -740,7 +878,7 @@ class ProductManager
         foreach ($product->getImages() as $image) {
             $parameters['idImage'] = $image->getIdImage();
 
-            Database::query($sql, $parameters);
+            $statement = Database::query($sql, $parameters);
         }
 
         return true;

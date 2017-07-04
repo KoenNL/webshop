@@ -52,6 +52,11 @@ class Controller
      */
     private $language;
 
+    /**
+     * @var bool
+     */
+    private $isLoggedIn = false;
+
     public function __construct($controller, $action)
     {
         $this->controller = $controller;
@@ -249,5 +254,24 @@ class Controller
         }
 
         return $this->language;
+    }
+
+    /**
+     * @param bool $loggedIn
+     * @return Controller $this
+     */
+    public function setLoggedIn($loggedIn)
+    {
+        $this->isLoggedIn = (bool) $loggedIn;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isLoggedIn()
+    {
+        return $this->isLoggedIn;
     }
 }

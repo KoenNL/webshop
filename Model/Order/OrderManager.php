@@ -35,9 +35,9 @@ class OrderManager
 
         $orders = array();
 
-        Database::query($sql);
+        $statement = Database::query($sql);
         // Return a mutiple user
-        while ($order = Database::fetchObject('Model\\Order\\Order')) {
+        while ($order = Database::fetchObject($statement, 'Model\\Order\\Order')) {
             $orders[] = $order;
         }
 
@@ -52,10 +52,10 @@ class OrderManager
             'idOrder' => $idOrder
         );
 
-        Database::query($sql, $parameters);
+        $statement = Database::query($sql, $parameters);
 
         // Return a single order
-        return Database::fetchObject('Model\\Order\\Order');
+        return Database::fetchObject($statement, 'Model\\Order\\Order');
     }
 
     private function insert(Order $Order)
@@ -70,7 +70,7 @@ class OrderManager
             'shippingCosts' => $Order->getShippingCosts(),
         );
 
-        Database::query($sql, $parameters);
+        $statement = Database::query($sql, $parameters);
         $idOrder = Database::getLastInsertId();
         if (!$idOrder) {
             return false;
@@ -119,7 +119,7 @@ class OrderManager
             'idOrder' => $order->getIdOrder()
         );
 
-        return Database::query($sql, $parameters);
+        return $statement = Database::query($sql, $parameters);
     }
 
     /**
@@ -140,7 +140,7 @@ class OrderManager
             'tax' => $orderLine->getTax()
         );
 
-        Database::query($sql, $parameters);
+        $statement = Database::query($sql, $parameters);
 
         $idOrderLine = Database::getLastInsertId();
 

@@ -44,15 +44,30 @@ echo $template->getHeader();
             </div>
             <div class="col-md-2" id="cart-indicator">
                 <div class="shoppingcart">
-                    <a href="?page=cart" title="Winkelwagen">Winkelwagen</a><br>
-                    <a href="?page=cart" title="Winkelwagen" class="text-active bold">2 items &euro; 68,95</a>
+                    <a href="/order/cart" title="Winkelwagen">Winkelwagen</a><br>
+                    <?php if (!empty($_SESSION['order']) && count($_SESSION['order']->getOrderLines()) > 0) : ?>
+                        <a href="/order/cart" title="Winkelwagen" class="text-active bold">
+                            <?php echo count($_SESSION['order']->getOrderLines()); ?> item<?php
+                            echo (count($_SESSION['order']->getOrderLines()) > 2) ? 's' : '';
+                            ?> &euro;
+                            <?php echo number_format($_SESSION['order']->getPrice(), 2, ',', '.'); ?>
+                        </a>
+                    <?php else : ?>
+                        <i>0 items</i>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
         <div class="col-md-4 col-md-offset-8">
-            <p class="text-right">Ingelogd als: <a href="?page=orderList" class="text-active">Arie Schouten</a>
-                <a href="/" title="Uitloggen">Uitloggen</a>
-            </p>
+            <?php if (!empty($_SESSION['user'])) : ?>
+                <p class="text-right">Ingelogd als: <a href="/adminorder/orderlist"
+                                                       class="text-active"><?php echo $_SESSION['user']->getName(); ?></a>
+                    <a href="/user/logoff" title="Uitloggen">Uitloggen</a>
+                </p>
+            <?php else : ?>
+                <p class="text-center"><a href="#" data-toggle="modal" data-target="#login-modal" class="text-active">Inloggen</a>
+                </p>
+            <?php endif; ?>
         </div>
     </div>
 </header>
@@ -91,7 +106,11 @@ echo $template->getHeader();
                 </ul>
                 <ul class="nav navbar-right">
                     <li>
-                        <a href="#" title="English"><img src="/images/flag-english.svg" height="20px"></a>
+                        <?php if ($_SESSION['language'] === 'nl') : ?>
+                            <a href="/page/changelanguage/en" title="English"><img src="/images/flag-english.svg" height="20px"></a>
+                        <?php elseif ($_SESSION['language'] === 'en') : ?>
+                            <a href="/page/changelanguage/nl" title="Nederlands"><img src="/images/flag-dutch.svg" height="20px"></a>
+                        <?php endif; ?>
                     </li>
                 </ul>
             </div>
@@ -142,6 +161,37 @@ echo $template->getFooter();
         </div>
     </div>
 </footer>
+<div class="modal fade" id="login-modal" tabindex="-1" role="dialog" aria-labelledby="login-modal-label">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="login-modal-label">Inloggen</h4>
+            </div>
+            <form action="/user/login" method="post">
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        <label for="login-email-address">Emailadres</label>
+                        <input type="email" class="form-control" name="login-email-address" id="login-email-address"
+                               required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Wachtwoord</label>
+                        <input type="password" class="form-control" id="login-password" name="login-password" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="form-group">
+                        <a href="/user/user" class="btn btn-default">Registreren</a>
+                        <input type="submit" class="btn btn-primary" name="login" value="Inloggen">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 <?php echo $template->getJavascript(); ?>
 </body>
 </html>

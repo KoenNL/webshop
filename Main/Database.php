@@ -3,6 +3,7 @@
 namespace Main;
 
 use PDO;
+use PDOStatement;
 use Exception;
 
 class Database
@@ -30,7 +31,7 @@ class Database
      * Send an SQL query to the database.
      * @param $query
      * @param array|null $params
-     * @return bool
+     * @return PDOStatement
      */
     public static function query($query, array $params = null)
     {
@@ -38,13 +39,13 @@ class Database
             self::connect();
         }
 
-        self::$statement = self::$connection->prepare($query);
+        $statement = self::$connection->prepare($query);
 
         if ($params) {
-            self::setParams($params);
+            self::setParams($statement, $params);
         }
 
-        return self::$statement->execute();
+        return $statement->execute() ? $statement : null;
     }
 
     /**
@@ -52,13 +53,13 @@ class Database
      * @param array $params
      * @return bool
      */
-    private static function setParams(array $params)
+    private static function setParams(PDOStatement $statement, array $params)
     {
         foreach ($params as $key => $param) {
             if (is_numeric($param) && !is_float($param)) {
-                self::$statement->bindValue($key, $param, PDO::PARAM_INT);
+                $statement->bindValue($key, $param, PDO::PARAM_INT);
             } else {
-                self::$statement->bindValue($key, $param, PDO::PARAM_STR);
+                $statement->bindValue($key, $param, PDO::PARAM_STR);
             }
         }
 
@@ -69,26 +70,18 @@ class Database
      * Fetch a new row from the result set as an array.
      * @return array
      */
-    public static function fetch()
+    public static function fetch(PDOStatement $statement)
     {
-        if (!self::$statement) {
-            return null;
-        }
-
-        return self::$statement->fetch(PDO::FETCH_ASSOC);
+        return $statement->fetch(PDO::FETCH_ASSOC);
     }
 
     /**
      * Fetch all rows of the result set as an associative array.
      * @return array
      */
-    public static function fetchAll()
+    public static function fetchAll(PDOStatement $statement)
     {
-        if (!self::$statement) {
-            return array();
-        }
-        
-        return self::$statement->fetchAll(PDO::FETCH_ASSOC);
+        return $statement->fetchAll(PDO::FETCH_ASSOC);
     }
     
     /**
@@ -97,9 +90,9 @@ class Database
      * @return object
      * @throws Exception
      */
-    public static function fetchObject($class)
+    public static function fetchObject(PDOStatement $statement, $class)
     {
-        $values = self::fetch();
+        $values = self::fetch($statement);
 
         if (!$values) {
             return null;
@@ -134,11 +127,8 @@ class Database
      * Returns the amount of inserted, updated, deleted or selected rows depending on the preceding query.
      * @return int
      */
-    public static function getRowCount()
+    public static function getRowCount(PDOStatement $statement)
     {
-        if (!self::$statement) {
-            return 0;
-        }
-        return (int) self::$statement->rowCount();
+        return (int) $statement->rowCount();
     }
 }

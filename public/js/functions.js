@@ -89,10 +89,36 @@ function addNewFeatureValue(idFeature) {
     });
 }
 
+function changeOrderLineAmount(idVariation, amount)
+{
+    if (!idVariation) {
+        return false;
+    }
+    var postData = {idVariation: idVariation, amount: amount};
+    $.post('/order/changeorderlineamount', postData, function (response) {
+        if (response.redirect) {
+            window.location.replace(response.redirect);
+        }
+    });
+}
+
 $(document).on('click', '#add-feature-button', function () {
     addFeaturePanel($('#add-feature').val());
 });
 
 $(document).on('click', '.add-new-feature-value', function() {
     addNewFeatureValue($(this).attr('data-id-feature'));
+});
+
+$(document).on('change', '.change-order-line-amount', function() {
+    var amount = $(this).val();
+    var idVariation = $(this).attr('data-id-variation');
+
+    changeOrderLineAmount(idVariation, amount);
+});
+
+$(document).on('click', '.remove-order-line', function() {
+    var idVariation = $(this).attr('data-id-variation');
+
+    changeOrderLineAmount(idVariation);
 });

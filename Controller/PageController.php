@@ -25,8 +25,15 @@ class PageController extends Controller
             'products' => $products,
             'homepage' => true
         );
-        
+
         return $this->write($values);
+    }
+
+    public function changeLanguageAction($idLanguage)
+    {
+        $_SESSION['language'] = $idLanguage;
+
+        $this->redirect('page', 'home');
     }
 
 }

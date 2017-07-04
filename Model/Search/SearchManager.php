@@ -29,10 +29,10 @@ class SearchManager
             'idSearch' => $idSearch
         );
 
-        Database::query($sql, $parameters);
+        $statement = Database::query($sql, $parameters);
 
         // Return a single user
-        return Database::fetchObject('Model\\Search\\Search');
+        return Database::fetchObject($statement, 'Model\\Search\\Search');
     }
 
     /**
@@ -45,9 +45,9 @@ class SearchManager
 
         $users = array();
 
-        Database::query($sql);
+        $statement = Database::query($sql);
         // Return a mutiple user
-        while ($search = Database::fetchObject('Model\\Search\\Search')) {
+        while ($search = Database::fetchObject($statement, 'Model\\Search\\Search')) {
             $searches[] = $search;
         }
 
@@ -63,10 +63,10 @@ class SearchManager
             'idSearch' => $idSearch
         );
 
-        Database::query($sql, $parameters);
+        $statement = Database::query($sql, $parameters);
 
         //Return a single emailAddress
-        return Database::fetchObject('Model\\Search\\Search');
+        return Database::fetchObject($statement, 'Model\\Search\\Search');
     }
     private function insert(Search $search) {
         $sql = 'INSERT INTO `search`(`idSearch`,`idUser`,`query`,`time`)
@@ -81,7 +81,7 @@ class SearchManager
         /**
          * is dit nodig Koen wat hieronder staat eerste deel?
          */
-        Database::query($sql, $parameters);
+        $statement = Database::query($sql, $parameters);
         $idSearch = Database::getLastInsertId();
         if (!$idSearch) {
             return false;

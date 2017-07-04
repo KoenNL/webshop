@@ -1,14 +1,11 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Freek
- * Date: 8-6-2017
- * Time: 13:12
- */
+
 namespace Controller;
+
 use Main\Controller;
 use Model\User\User;
 use model\user\UserManager;
+
 class UserController extends Controller
 {
     public function userAction($idUser = null)
@@ -93,12 +90,12 @@ class UserController extends Controller
     {
         $userManager = new UserManager();
         $user = $userManager->getUserByEmailAddress($_POST);
-        if(!$userManager->checkPassword($user, $_POST['password'])){
-            sleep(5);
+        if (!$userManager->checkPassword($user, $_POST['password'])) {
+            sleep(3);
             return $this->write(array('error' => 'Uw e-mail of wachtwoord is onjuist.'));
         }
-        $_SESSION['idUser']=$user->getIdUser();
-        if ($user->getType()==='admin'){
+        $_SESSION['user'] = $user;
+        if ($user->getType() === 'admin') {
             return $this->redirect('adminorder', 'orderlist');
         }
         return $this->redirect('page', 'home');

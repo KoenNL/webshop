@@ -43,12 +43,12 @@ class CategoryManager
             'idLanguage' => $this->idLanguage
         );
 
-        Database::query($sql, $parameters);
+        $statement = Database::query($sql, $parameters);
 
         $categories = array();
         $parentCategory = new Category;
 
-        while ($categoryRow = Database::fetch()) {
+        while ($categoryRow = Database::fetch($statement)) {
             if (empty($categoryRow['idParentCategory']) && $parentCategory->getIdCategory() != $categoryRow['idCategory']) {
                 $parentCategory = $this->arrayToCategory($categoryRow);
                 $categories[] = $parentCategory;

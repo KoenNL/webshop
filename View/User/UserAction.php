@@ -1,8 +1,11 @@
 <?php
 $user = $controller->getValue('user');
 $systemTranslation = $controller->getValue('systemTranslation');
-?>
 
+if ($controller->getValue('error')) : ?>
+<div class="alert alert-danger"><?php echo ucfirst($controller->getValue('error')); ?></div>
+<?php endif; ?>
+<?php if ($controller->isLoggedIn()) : ?>
 <div class="row">
     <div class="col-sm-12">
         <div class="navbar navbar-default">
@@ -24,9 +27,10 @@ $systemTranslation = $controller->getValue('systemTranslation');
         </div>
     </div>
 </div>
+<?php endif; ?>
 <div class="row">
     <div class="col-md-6 col-sm-12">
-        <form>
+        <form action="/user/user" method="post">
             <div class="form-group">
                 <label for="name" class="required"><?php echo ucfirst($systemTranslation->translate('name')); ?></label>
                 <input type="text" name="name" id="name" class="form-control" value="<?php echo $user->getName(); ?>" required>
@@ -35,6 +39,7 @@ $systemTranslation = $controller->getValue('systemTranslation');
                 <label for="email-address" class="required"><?php echo ucfirst($systemTranslation->translate('email-address')); ?></label>
                 <input type="email" name="email-address" id="email-address" class="form-control" value="<?php echo $user->getEmailAddress(); ?>" required>
             </div>
+            <?php if (!$controller->isLoggedIn()) : ?>
             <div class="form-group">
                 <label for="password" class="required"><?php echo ucfirst($systemTranslation->translate('password')); ?></label>
                 <input type="password" name="password" id="password" class="form-control" required>
@@ -43,11 +48,16 @@ $systemTranslation = $controller->getValue('systemTranslation');
                 <label for="password-repeat" class="required"><?php echo ucfirst($systemTranslation->translate('password-repeat')); ?></label>
                 <input type="password" name="password-repeat" id="password-repeat" class="form-control" required>
             </div>
+            <?php endif; ?>
             <div class="form-group">
                 <label for="language" class="required"><?php echo ucfirst($systemTranslation->translate('language')); ?></label>
                 <select name="language" id="language" class="selectpicker form-control" required>
                     <?php foreach ($controller->getValue('languages') as $language) : ?>
-                        <option value="<?php echo $language['idLanguage']; ?>"><?php echo $language['name']; ?></option>
+                        <option value="<?php echo $language['idLanguage']; ?>"
+                            <?php echo ($user->getLanguage() === $language['idLanguage'] ||
+                                (empty($user->getLanguage()) && $language['idLanguage'] === $controller->getValue('idLanguage'))) ? 'selected' : ''; ?>>
+                            <?php echo $language['name']; ?>
+                        </option>
                     <?php endforeach; ?>
                 </select>
             </div>
@@ -68,7 +78,9 @@ $systemTranslation = $controller->getValue('systemTranslation');
                 <input type="text" name="phonenumber" id="phonenumber" class="form-control" value="<?php echo $user->getPhoneNumber(); ?>" >
             </div>
             <div class="form-group">
-                <input type="submit" class="btn btn-primary" name="register" value="<?php echo ucfirst($systemTranslation->translate('register')); ?>">
+                <input type="submit" class="btn btn-primary" name="save"
+                       value="<?php echo ucfirst($controller->isLoggedIn() ? $systemTranslation->translate('save') :
+                           $systemTranslation->translate('register')); ?>">
             </div>
         </form>
     </div>

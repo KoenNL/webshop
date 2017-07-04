@@ -4,30 +4,18 @@ if ($product) :
     ?>
     <div class="row">
         <div class="col-md-2 col-sm-4">
+            <?php foreach ($product->getImages() as $image) : ?>
             <div class="row product-image-thumbnail">
                 <div class="col-sm-12">
-                    <a href="product/product" title="Grote weergave">
-                        <img src="images/Product%20top.jpg" class="img-tiny img-selected">
+                    <a href="#" title="Grote weergave">
+                        <img src="<?php echo $image->getPath(); ?>" class="img-tiny img-selected">
                     </a>
                 </div>
             </div>
-            <div class="row product-image-thumbnail">
-                <div class="col-sm-12">
-                    <a href="product/product" title="Grote weergave">
-                        <img src="images/Product%20top.jpg" class="img-tiny">
-                    </a>
-                </div>
-            </div>
-            <div class="row product-image-thumbnail">
-                <div class="col-sm-12">
-                    <a href="product/product" title="Grote weergave">
-                        <img src="images/Product%20top.jpg" class="img-tiny">
-                    </a>
-                </div>
-            </div>
+            <?php endforeach; ?>
         </div>
         <div class="col-md-4 col-sm-8">
-            <img src="images/Product%20top.jpg" class="img-primary">
+            <img src="<?php echo $product->getImages() ? $product->getImages()[0]->getPath() : ''; ?>" class="img-primary">
         </div>
         <div class="col-md-6 col-sm-12">
             <div class="row">
@@ -37,31 +25,36 @@ if ($product) :
                     </p>
                 </div>
             </div>
-            <form>
-                <div class="row product-feature">
-                    <div class="col-sm-2">
-                        <label for="feature-maat">Maat</label>
+            <form action="/order/addproduct/<?php echo $product->getIdProduct(); ?>" method="post">
+                <?php foreach ($controller->getValue('features') as $feature) : ?>
+                    <div class="row product-feature">
+                        <div class="col-sm-2">
+                            <label for="feature-<?php echo $feature->getIdFeature(); ?>">
+                                <?php echo ucfirst($feature->getName()); ?>
+                            </label>
+                        </div>
+                        <div class="col-sm-10">
+                            <?php if (count($feature->getFeatureValues()) > 1) : ?>
+                            <select class="selectpicker" id="features[<?php echo $feature->getIdFeature(); ?>]"
+                                    name="features[<?php echo $feature->getIdFeature(); ?>]">
+                                <?php foreach ($feature->getFeatureValues() as $featureValue) : ?>
+                                    <option value="<?php echo $featureValue->getIdFeatureValue(); ?>">
+                                        <?php echo $featureValue->getValue(); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                            <?php else : ?>
+                                <p><?php echo $feature->getFeatureValues()[0]->getValue(); ?></p>
+                                <input type="hidden" name="features[<?php echo $feature->getIdFeature(); ?>"
+                                       value="<?php echo $feature->getFeatureValues()[0]->getIdFeatureValue(); ?>">
+                            <?php endif; ?>
+                        </div>
                     </div>
-                    <div class="col-sm-10">
-                        <select class="selectpicker" id="feature-maat" name="feature-maat">
-                            <option>S</option>
-                            <option>M</option>
-                            <option>L</option>
-                            <option>XL</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="row product-feature">
-                    <div class="col-sm-2">
-                        <label for="feature-kleur">Kleur</label>
-                    </div>
-                    <div class="col-sm-10">
-                        <p id="feature-kleur">Zwart</p>
-                    </div>
-                </div>
+                <?php endforeach; ?>
                 <div class="row">
                     <div class="col-sm-12">
-                        <p class="product-price-large">&euro; <?php echo number_format($product->getPrice(), 2, ',', '.'); ?></p>
+                        <p class="product-price-large">
+                            &euro; <?php echo number_format($product->getPrice(), 2, ',', '.'); ?></p>
                     </div>
                 </div>
                 <div class="row">

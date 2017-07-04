@@ -43,20 +43,12 @@ class ImageManager
             'idLanguage' => $this->idLanguage
         );
 
-        Database::query($sql, $parameters);
+        $statement = Database::query($sql, $parameters);
 
         $images = array();
         $originalImage = null;
 
-        while ($image = Database::fetch()) {
-            if (empty($image['idOriginalImage'])) {
-                $originalImage = $this->arrayToImage($image);
-                continue;
-            }
-            if ($originalImage) {
-                $image['idOriginalImage'] = $originalImage;
-            }
-
+        while ($image = Database::fetch($statement)) {
             $images[] = $this->arrayToImage($image);
         }
 

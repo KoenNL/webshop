@@ -16,7 +16,8 @@ $config = array(
     'loader' => array(
         'default_controller' => 'main',
         'default_action' => 'index',
-    )
+    ),
+    'idShop' => 1
 );
 
 return $config;
