@@ -77,21 +77,23 @@ if ($controller->getValue('error')) : ?>
             <?php endif; ?>
             <tr class="active">
                 <td colspan="3"><?php echo ucfirst($systemTranslation->translate('subtotal')); ?></td>
-                <td>&euro; <?php echo number_format($order->getPrice(),2 , ',', '.'); ?></td>
+                <td>&euro; <?php echo number_format($order->getPrice(), 2, ',', '.'); ?></td>
             </tr>
             <tr>
                 <td colspan="3">
                     <?php echo ucfirst($systemTranslation->translate('shipping-cost')); ?>
                     <i>(
                         <?php echo $systemTranslation->translate('shipping-costs-free-at') . ' &euro;'
-                            . number_format($shop->getShippingCostsThreshold(),2 , ',', '.'); ?>)
+                            . number_format($shop->getShippingCostsThreshold(), 2, ',', '.'); ?>)
                     </i>
                 </td>
                 <td>&euro; <?php echo number_format($order->getShippingCosts(), 2, ',', '.'); ?></td>
             </tr>
             <tr class="active">
                 <td colspan="3"><strong><?php echo ucfirst($systemTranslation->translate('total')); ?></strong></td>
-                <td><strong>&euro; <?php echo number_format($order->getPrice() + $order->getShippingCosts(),2 , ',', '.'); ?></strong></td>
+                <td>
+                    <strong>&euro; <?php echo number_format($order->getPrice() + $order->getShippingCosts(), 2, ',', '.'); ?></strong>
+                </td>
             </tr>
             </tbody>
         </table>
@@ -133,9 +135,11 @@ if ($controller->getValue('error')) : ?>
         </a>
     </div>
     <div class="col-md-4 col-md-offset-6 col-sm-6">
-        <a href="/order/payment" title="<?php echo ucfirst($systemTranslation->translate('payment')); ?>"
-           class="btn btn-primary">
-            <?php echo ucfirst($systemTranslation->translate('payment')); ?>
-        </a>
+        <?php if (count($order->getOrderLines()) > 0) : ?>
+            <a href="/order/payment" title="<?php echo ucfirst($systemTranslation->translate('payment')); ?>"
+               class="btn btn-primary">
+                <?php echo ucfirst($systemTranslation->translate('payment')); ?>
+            </a>
+        <?php endif; ?>
     </div>
 </div>

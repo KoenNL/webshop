@@ -154,8 +154,8 @@ class OrderController extends Controller
     {
         $systemTranslation = new SystemTranslation($this->getLanguage());
 
-        if (empty($_SESSION['order']) || empty($_SESSION['user'])) {
-            $this->redirect('order', 'cart');
+        if (empty($_SESSION['order']) || empty($_SESSION['user']) || count($_SESSION['order']->getOrderLines()) === 0) {
+            return $this->redirect('order', 'cart');
         }
 
         if (!empty($_SESSION['error'])) {
@@ -193,7 +193,7 @@ class OrderController extends Controller
     {
         $systemTranslation = new SystemTranslation($this->getLanguage());
 
-        if (empty($_SESSION['order']) || empty($_SESSION['user'])) {
+        if (empty($_SESSION['order']) || empty($_SESSION['user']) || count($_SESSION['order']->getOrderLines()) === 0) {
             return $this->redirect('order', 'cart');
         }
 
