@@ -2,14 +2,9 @@
 
 namespace Model\Order;
 
-// Save
-// Delete
-// GetOrderById (idorder : int)
-// getOrders(idUser : int = NULL)
-
 
 use Main\Database;
-use Model\OrderLine\OrderLine;
+use Model\Order\OrderLine;
 
 class OrderManager
 {
@@ -58,47 +53,62 @@ class OrderManager
         return Database::fetchObject($statement, 'Model\\Order\\Order');
     }
 
-    private function insert(Order $Order)
+    private function insert(Order $order)
     {
         $sql = 'INSERT INTO `Order`(`idOrder`,`idUser`,`time`,`status`,`shippingCosts`)
                 VALUES (:idOrder, :idUser, :time, :status, :shippingCosts)';
         $parameters = array(
-            'idOrder' => $Order->getIdOrder(),
-            'idUser' => $Order->getIdUser(),
-            'time' => $Order->getInserttime(),
-            'status' => $Order->getStatus(),
-            'shippingCosts' => $Order->getShippingCosts(),
+            'idOrder' => $order->getIdOrder(),
+            'idUser' => $order->getIdUser(),
+            'time' => $order->getInsertTime()->format('Y-m-d H:i:s'),
+            'status' => $order->getStatus(),
+            'shippingCosts' => $order->getShippingCosts(),
         );
 
-        $statement = Database::query($sql, $parameters);
+        Database::query($sql, $parameters);
         $idOrder = Database::getLastInsertId();
         if (!$idOrder) {
             return false;
         }
-        $Order->setIdOrder($idOrder);
+
+        $order->setIdOrder($idOrder);
+
+        foreach ($order->getOrderLines() as $orderLine) {
+            $orderLine->setIdOrder($idOrder);
+            $this->saveOrderLine($orderLine);
+        }
+
         return true;
     }
 
 
     private function update(Order $order)
     {
-        /** @var Update $sql */
         $sql = 'UPDATE `Order` SET
-            `idOrder` = :idOrder,
             `idUser` = :idUser,
             `time` = :time,
             `status` = :status,
-            `shippingCosts` = :shippingCosts,
+            `shippingCosts` = :shippingCosts
             WHERE `idOrder` = :idOrder';
 
         $parameters = array(
-            'idOrder' => $Order->getIdOrder(),
-            'idUser' => $Order->getIdUser(),
-            'time' => $Order->getInserttime(),
-            'status' => $Order->getStatus(),
-            'shippingCosts' => $Order->getShippingCosts());
+            'idOrder' => $order->getIdOrder(),
+            'idUser' => $order->getIdUser(),
+            'time' => $order->getInsertTime()->format('Y-m-d H:i:s'),
+            'status' => $order->getStatus(),
+            'shippingCosts' => $order->getShippingCosts());
 
-        database::query($sql, $parameters);
+        Database::query($sql, $parameters);
+
+        // If the order is a shopping cart, delete and save all order lines.
+        if ($order->getStatus() === 'cart') {
+            $this->deleteOrderLines($order);
+            foreach ($order->getOrderLines() as $orderLine) {
+                $orderLine->setIdOrder($order->getIdOrder());
+                $this->saveOrderLine($orderLine);
+            }
+        }
+
         return true;
     }
 
@@ -119,7 +129,9 @@ class OrderManager
             'idOrder' => $order->getIdOrder()
         );
 
-        return $statement = Database::query($sql, $parameters);
+        $statement = Database::query($sql, $parameters);
+
+        return Database::getRowCount($statement) ? true : false;
     }
 
     /**
@@ -134,13 +146,13 @@ class OrderManager
 
         $parameters = array(
             'idOrder' => $orderLine->getIdOrder(),
-            'idVariation' => $orderLine->getIdVariation(),
+            'idVariation' => $orderLine->getProduct()->getSelectedVariation()->getIdVariation(),
             'amount' => $orderLine->getAmount(),
             'price' => $orderLine->getPrice(),
             'tax' => $orderLine->getTax()
         );
 
-        $statement = Database::query($sql, $parameters);
+        Database::query($sql, $parameters);
 
         $idOrderLine = Database::getLastInsertId();
 

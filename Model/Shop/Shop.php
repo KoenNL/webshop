@@ -14,6 +14,10 @@ class Shop
      */
     private $name;
     /**
+     * @var string
+     */
+    private $emailAddress;
+    /**
      * @var float
      */
     private $shippingCosts;
@@ -70,6 +74,25 @@ class Shop
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * @param string $emailAddress
+     * @return Shop $this
+     */
+    public function setEmailAddress($emailAddress)
+    {
+        $this->emailAddress = $emailAddress;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEmailAddress()
+    {
+        return $this->emailAddress;
     }
 
     /**
@@ -154,7 +177,7 @@ class Shop
      */
     public function setIdLanguage($language)
     {
-        $this->language = $language;
+        $this->idLanguage = $language;
 
         return $this;
     }
@@ -164,6 +187,6 @@ class Shop
      */
     public function getIdLanguage()
     {
-        return $this->language;
+        return $this->idLanguage;
     }
 }

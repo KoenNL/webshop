@@ -43,6 +43,10 @@ class SystemTranslation
             'en' => 'categories',
             'nl' => 'categorie&euml;n'
         ),
+        'change-cart' => array(
+            'en' => 'change cart',
+            'nl' => 'winkelwagen wijzigen'
+        ),
         'close' => array(
             'en' => 'close',
             'nl' => 'sluiten'
@@ -66,6 +70,18 @@ class SystemTranslation
         'edit' => array(
             'en' => 'edit',
             'nl' => 'wijzigen'
+        ),
+        'email-end' => array(
+            'en' => 'kind regards',
+            'nl' => 'met vriendelijke groet'
+        ),
+        'email-error' => array(
+            'en' => 'an error occurred while sending an email',
+            'nl' => 'er heeft zich een fout voorgedaan tijdens het versturen van een e-mail'
+        ),
+        'email-intro' => array(
+            'en' => 'dear',
+            'nl' => 'beste'
         ),
         'failed-to-save' => array(
             'en' => 'failed to save value to the database',
@@ -115,6 +131,24 @@ class SystemTranslation
             'en' => 'no product set',
             'nl' => 'geen product gegeven'
         ),
+        'order' => array(
+            'en' => 'order',
+            'nl' => 'bestelling'
+        ),
+        'order-complete' => array(
+            'en' => 'order complete',
+            'nl' => 'bestelling voltooid'
+        ),
+        'order-confirmation' => array(
+            'en' => 'order confirmation',
+            'nl' => 'bestelbevestiging'
+        ),
+        'order-confirmation-message' => array(
+            'en' => 'Thank you for your order. 
+            You will receive an email when your order has been sent out. We\'ll send your order as soon as possible.',
+            'nl' => 'Bedankt voor uw bestlling. U krijgt nog een e-mail wanneer wij de bestelling naar u hebben verzonden. Wij sturen de bestelling zo snel
+            mogelijk naar u toe.'
+        ),
         'no-results' => array(
             'en' => 'there are no results',
             'nl' => 'er zijn geen resultaten'
@@ -122,6 +156,10 @@ class SystemTranslation
         'payment' => array(
             'en' => 'payment',
             'nl' => 'betaling'
+        ),
+        'payment-error' => array(
+            'en' => 'an error occurred while redirecting to the payment provider',
+            'nl' => 'er is een fout ontstaan bij het doorsturen naar de betalingsservice'
         ),
         'price' => array(
             'en' => 'price',
@@ -178,6 +216,17 @@ class SystemTranslation
         'summary' => array(
             'en' => 'summary',
             'nl' => 'overzicht'
+        ),
+        'thanks-for-your-order' => array(
+            'en' => 'thanks for your order',
+            'nl' => 'bedankt voor uw bestelling'
+        ),
+        'thanks-for-order-message' => array(
+            'en' => 'Thank you for your order. You received an email with a confirmation. 
+            You will also receive an email when your order has been sent out. We\'ll send your order as soon as possible.',
+            'nl' => 'Bedankt voor uw bestlling. U heeft een e-mail met een bevestiging van ons ontvangen. U
+            krijgt nog een e-mail wanneer wij de bestelling naar u hebben verzonden. Wij sturen de bestelling zo snel
+            mogelijk naar u toe.',
         ),
         'total' => array(
             'en' => 'total',

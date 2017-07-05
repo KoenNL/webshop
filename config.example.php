@@ -17,7 +17,14 @@ $config = array(
         'default_controller' => 'main',
         'default_action' => 'index',
     ),
-    'idShop' => 1
+    'idShop' => 1,
+    'mollieAPIKey' => '',
+    'smtp' => array(
+        'host' => '',
+        'username' => '',
+        'password' => '',
+        'port' => 587
+    )
 );
 
 return $config;

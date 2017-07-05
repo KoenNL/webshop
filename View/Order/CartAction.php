@@ -113,9 +113,16 @@ if ($controller->getValue('error')) : ?>
         </a>
     </div>
     <div class="col-md-4 col-md-offset-6 col-sm-6">
+        <?php if(!empty($_SESSION['user'])) : ?>
+            <a href="/order/summary" title="<?php echo ucfirst($systemTranslation->translate('summary')); ?>"
+               class="btn btn-primary">
+                <?php echo ucfirst($systemTranslation->translate('continue-order')); ?>
+            </a>
+        <?php else : ?>
         <a href="#" title="<?php echo ucwords($systemTranslation->translate('login-register')); ?>"
            class="btn btn-primary" data-toggle="modal" data-target="#login-modal">
             <?php echo ucfirst($systemTranslation->translate('continue-order')); ?>
         </a>
+        <?php endif; ?>
     </div>
 </div>

@@ -4,13 +4,16 @@ namespace Controller;
 
 use Main\Config;
 use Main\Controller;
+use Model\Email\EmailManager;
 use Model\Order\Order;
 use Model\Order\OrderManager;
 use Model\Order\OrderLine;
+use Model\Payment\PaymentManager;
 use Model\Product\ProductManager;
 use Model\Shop\ShopManager;
 use Model\Translation\SystemTranslation;
 use \DateTime;
+use \Exception;
 
 class OrderController extends Controller
 {
@@ -145,5 +148,120 @@ class OrderController extends Controller
         $_SESSION['order'] = $order;
 
         return $this->write(array('redirect' => '/order/cart'));
+    }
+
+    public function summaryAction()
+    {
+        $systemTranslation = new SystemTranslation($this->getLanguage());
+
+        if (empty($_SESSION['order']) || empty($_SESSION['user'])) {
+            $this->redirect('order', 'cart');
+        }
+
+        if (!empty($_SESSION['error'])) {
+            $error = $_SESSION['error'];
+            unset($_SESSION['error']);
+        } else {
+            $error = '';
+        }
+
+        $order = $_SESSION['order'];
+        $user = $_SESSION['user'];
+
+        $shopManager = new ShopManager;
+        $shop = $shopManager->getShopById(Config::getValue('idShop'));
+
+        $orderManager = new OrderManager;
+        $orderManager->save($order);
+
+        $this->template->setTitle(ucfirst($systemTranslation->translate('summary')));
+        $this->template->addBreadcrumb('/order/cart', $systemTranslation->translate('cart'));
+        $this->template->addBreadcrumb('/order/summary', $systemTranslation->translate('summary'));
+
+        $values = array(
+            'systemTranslation' => $systemTranslation,
+            'order' => $order,
+            'user' => $user,
+            'shop' => $shop,
+            'error' => $error
+        );
+
+        return $this->write($values);
+    }
+
+    public function paymentAction()
+    {
+        $systemTranslation = new SystemTranslation($this->getLanguage());
+
+        if (empty($_SESSION['order']) || empty($_SESSION['user'])) {
+            return $this->redirect('order', 'cart');
+        }
+
+        $order = $_SESSION['order'];
+        $order->setStatus('ordered');
+        $orderManager = new OrderManager;
+        $orderManager->save($order);
+
+        $user = $_SESSION['user'];
+
+        try {
+            $emailManager = new EmailManager;
+            $emailManager->sendConfirmation($order, $user);
+        } catch (Exception $e) {
+            if (Config::getValue('debug')) {
+                $_SESSION['error'] = $e->getMessage();
+            } else {
+                $_SESSION['error'] = $systemTranslation->translate('email-error');
+            }
+            return $this->redirect('order', 'summary');
+        }
+
+        $paymentManager = new PaymentManager;
+        
+        try {
+            $paymentManager->createPayment($order);
+        } catch (Exception $e) {
+            if (Config::getValue('debug')) {
+                $_SESSION['error'] = $e->getMessage();
+            } else {
+                $_SESSION['error'] = $systemTranslation->translate('payment-error');
+            }
+        }
+
+        return $this->redirect('order', 'summary');
+    }
+
+    public function finishAction()
+    {
+        if (empty($_SESSION['order'])) {
+            return $this->redirect('page', 'home');
+        }
+
+        $order = $_SESSION['order'];
+
+        if ($order->getStatus() !== 'ordered') {
+            return $this->redirect('order', 'summary');
+        }
+
+        $systemTranslation = new SystemTranslation($this->getLanguage());
+
+        $shopManager = new ShopManager;
+        $shop = $shopManager->getShopById(Config::getValue('idShop'));
+
+        $order->setStatus('payed');
+        $orderManager = new OrderManager;
+        $orderManager->save($order);
+
+        unset($_SESSION['order']);
+
+        $this->template->setTitle(ucfirst($systemTranslation->translate('order-complete')));
+
+        $values = array(
+            'systemTranslation' => $systemTranslation,
+            'order' => $order,
+            'shop' => $shop
+        );
+
+        return $this->write($values);
     }
 }
