@@ -47,7 +47,7 @@ class UserController extends Controller
 
 
             if (empty($_POST['name']) || empty($_POST['email-address']) || empty($_POST['password']) || empty($_POST['language']) || empty($_POST['address'])
-                || empty($_POST['postal-code']) || empty($_POST['city']) || empty($_POST['type'])|| empty($_POST['phone-number'])
+                || empty($_POST['postal-code']) || empty($_POST['city']) || empty($_POST['type']) || empty($_POST['phone-number'])
             ) {
                 $error = $systemTranslation->translate('required-values-missing');
             } elseif ($_POST['password'] !== $_POST['password-repeat']) {

@@ -331,7 +331,7 @@ class SystemTranslation
         'free-shipping' => array(
             'en' => '(on orders with a total price of over &euro; 75-, shipping is free)',
             'nl' => '(bij een bestelling van meer dan &euro; 75,- zijn er geen verzendkosten)'
-        );
+        ));
 
 
     /**

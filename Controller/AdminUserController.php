@@ -9,11 +9,16 @@ namespace Controller;
 use Main\Controller;
 use Model\User\User;
 use model\user\UserManager;
+use Model\Translation\SystemTranslation;
+use Model\Translation\TranslationManager;
+
 class UserController extends Controller
 {
     public function userAction($idUser = null)
     {
-        //$systemTranslation = $controller->getValue('systemTranslation');
+        $systemTranslation = new SystemTranslation($this->getLanguage());
+        $translationManager = new TranslationManager($this->getLanguage());
+
         $userManager = new UserManager();
         if ($idUser) {
             $user = $userManager->getUserById($idUser);
@@ -21,8 +26,7 @@ class UserController extends Controller
             $user = new User();
 
         }
-        $systemTranslation = new SystemTranslation($this->getLanguage());
-        $translationManager = new TranslationManager($this->getLanguage());
+
 
         $error = '';
 
@@ -69,6 +73,8 @@ class UserController extends Controller
 
     public function changePasswordAction($idUser)
     {
+        $systemTranslation = new SystemTranslation($this->getLanguage());
+
         $userManager = new UserManager();
         if ($idUser) {
             $user = $userManager->getUserById($idUser);
@@ -91,11 +97,13 @@ class UserController extends Controller
 
     public function loginAction()
     {
+        $systemTranslation = new SystemTranslation($this->getLanguage());
+
         $userManager = new UserManager();
         $user = $userManager->getUserByEmailAddress($_POST);
         if(!$userManager->checkPassword($user, $_POST['password'])){
             sleep(5);
-            return $this->write(array('error' => 'Uw e-mail of wachtwoord is onjuist.'));
+            return $this->write(array('error' => ucfirst($systemTranslation->translate('password-incorrect'))));
         }
         $_SESSION['idUser']=$user->getIdUser();
         if ($user->getType()==='admin'){
