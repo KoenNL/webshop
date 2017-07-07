@@ -331,8 +331,16 @@ class SystemTranslation
         'free-shipping' => array(
             'en' => '(on orders with a total price of over &euro; 75-, shipping is free)',
             'nl' => '(bij een bestelling van meer dan &euro; 75,- zijn er geen verzendkosten)'
-        );
-
+        ),
+        'no-search-results' => array(
+            'en' => 'sorry, no search results found',
+            'nl' => 'sorry, geen zoekresultaat gevonden'
+        ),
+        'insert-query' => array(
+            'en' => 'please enter a search query',
+            'nl' => 'voer alstublieft een zoekopdracht in'
+        )
+    );
 
     /**
      * SystemTranslation constructor.
