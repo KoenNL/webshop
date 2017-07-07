@@ -16,23 +16,23 @@ use Model\Translation\SystemTranslation;
 
 class SearchController extends Controller
 {
-    public function searchAction($search=null)
+
+    public function searchAction($search = null)
     {
-        if (empty($_POST['search'])) {
-            return $this->write(array('error'=> 'dit is een test'));
-        }
         $search = $_POST['search'];
         $productmanager = new ProductManager($this->getLanguage());
         $systemTranslation = new SystemTranslation($this->getLanguage());
         $products = $productmanager->getProducts($search);
 
-
+        if (empty($_POST['search'])) {
+            return $this->write(array('error' => ucfirst($systemTranslation->translate('insert-query'))));
+        }
         if (!$products) {
-            return $this->write(array('error' => 'Zoek opdracht niet gevonden'));
+            return $this->write(array('error' => ucfirst($systemTranslation->translate('no-search-results'))));
         }
 
-        $values = array('products'=>$products,
-                        'systemTranslation'=>$systemTranslation);
+        $values = array('products' => $products,
+            'systemTranslation' => $systemTranslation);
 
         return $this->write($values);
     }

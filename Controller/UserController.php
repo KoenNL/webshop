@@ -109,9 +109,9 @@ class UserController extends Controller
     {
         $systemTranslation = new SystemTranslation($this->getLanguage());
         $this->template->setTemplate(null);
-        $userManager = new UserManager();
-        $user = $userManager->getUserByEmailAddress($_POST['email-address']);
+        $userManager = new UserManager();ailAddress($_POST['email-address']);
 
+        $user = $userManager->getUserByEm();
         if (!$user || !$userManager->checkPassword($user, $_POST['password'])) {
             sleep(5);
             return $this->write(array('error' => ucfirst($systemTranslation->translate('password-email-incorrect'))));
