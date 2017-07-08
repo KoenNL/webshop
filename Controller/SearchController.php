@@ -21,9 +21,8 @@ class SearchController extends Controller
     {
         $search = $_POST['search'];
         $productmanager = new ProductManager($this->getLanguage());
-        $systemTranslation = new SystemTranslation($this->getLanguage());
         $products = $productmanager->getProducts($search);
-
+        $systemTranslation = new SystemTranslation($this->getLanguage());
         if (empty($_POST['search'])) {
             return $this->write(array('error' => ucfirst($systemTranslation->translate('insert-query'))));
         }

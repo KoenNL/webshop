@@ -1,4 +1,5 @@
 <?php
+namespace Model\Search;
 
 /**
  * Created by PhpStorm.

@@ -11,6 +11,7 @@ namespace Controller;
 
 use Main\Controller;
 use Model\Translation\SystemTranslation;
+use Model\Search\SearchManager;
 
 class AdminSearchController extends Controller
 {
@@ -20,19 +21,30 @@ class AdminSearchController extends Controller
         $systemTranslation = new SystemTranslation($this->getLanguage());
         $this->template->setTemplate('admin');
         $this->template->setTitle(ucfirst($systemTranslation->translate('search-results')));
-        return $this->write(array());
+
+        $searchManager = new SearchManager($this->getLanguage());
+
+        if (!empty($_POST['search'])) {
+            $searches = $searchManager->getSearchById($_POST['search']);
+        } else {
+            $searches = $searchManager->getSearches();
+        }
+       return $this->write(array('search' => $searches));
     }
 
     public function searchResultsAction()
     {
         $systemTranslation = new SystemTranslation($this->getLanguage());
+        $searchManager = new SearchManager($this->getLanguage());
         $this->template->setTemplate('admin');
         $this->template->setTitle(ucfirst($systemTranslation->translate('search-results')));
         $this->template->addBreadcrumb('/adminsearch/searchlist', ucfirst($systemTranslation->translate('search-query')));
         $this->template->addBreadcrumb('/adminsearch/searchresults', ucfirst($systemTranslation->translate('search-results')));
-        return $this->write(array());
+
+        $idSearch = $searchManager->getSearches();
+        $searchManager = new SearchManager($this->getLanguage());
+        $idSearch = $searchManager->getSearchResults($idSearch);
+        return $this->write(array('idSearch' => $idSearch));
     }
-
-
 
 }
