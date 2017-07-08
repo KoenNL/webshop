@@ -103,12 +103,38 @@ class UserController extends Controller
         $user = $userManager->getUserByEmailAddress($_POST);
         if(!$userManager->checkPassword($user, $_POST['password'])){
             sleep(5);
-            return $this->write(array('error' => ucfirst($systemTranslation->translate('password-incorrect'))));
+            return $this->write(array('error' => ucfirst($systemTranslation->translate('passwords-incorrect'))));
         }
         $_SESSION['idUser']=$user->getIdUser();
         if ($user->getType()==='admin'){
             return $this->redirect('adminorder', 'orderlist');
         }
         return $this->redirect('page', 'home');
+    }
+
+    public function userListAction()
+    {
+        $this->template->setTemplate('admin');
+
+        $userManager = new UserManager($this->getLanguage());
+
+        if (!empty($_POST['search'])) {
+            $users = $userManager->getUserByid($_POST['search']);
+        } else {
+            $users = $userManager->getUsers();
+        }
+
+        $systemTranslation = new SystemTranslation($this->getLanguage());
+
+        $this->template->setTitle(ucfirst($systemTranslation->translate('user-list')));
+        $this->template->addBreadcrumb('adminuser/userlist', ucfirst($systemTranslation->translate('user-list')));
+
+        $values = array(
+            'users' => $users,
+            'noResults' => $systemTranslation->translate('no-results'),
+            'search' => $systemTranslation->translate('search'),
+            );
+
+        $this->write($values);
     }
 }

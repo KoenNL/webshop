@@ -331,10 +331,7 @@ class SystemTranslation
         'free-shipping' => array(
             'en' => '(on orders with a total price of over &euro; 75-, shipping is free)',
             'nl' => '(bij een bestelling van meer dan &euro; 75,- zijn er geen verzendkosten)'
-<<<<<<< HEAD
-        ));
 
-=======
         ),
         'no-search-results' => array(
             'en' => 'sorry, no search results found',
@@ -343,9 +340,13 @@ class SystemTranslation
         'insert-query' => array(
             'en' => 'please enter a search query',
             'nl' => 'voer alstublieft een zoekopdracht in'
+        ),
+
+        'user-list' => array(
+            'en' => 'user list',
+            'nl' => 'gebruikerslijst'
         )
     );
->>>>>>> origin/Arie2.0
 
     /**
      * SystemTranslation constructor.

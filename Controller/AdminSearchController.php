@@ -21,6 +21,8 @@ class AdminSearchController extends Controller
         $systemTranslation = new SystemTranslation($this->getLanguage());
         $this->template->setTemplate('admin');
         $this->template->setTitle(ucfirst($systemTranslation->translate('search-results')));
+
+
         return $this->write(array());
     }
 
@@ -31,6 +33,8 @@ class AdminSearchController extends Controller
         $this->template->setTitle(ucfirst($systemTranslation->translate('search-results')));
         $this->template->addBreadcrumb('/adminsearch/searchlist', ucfirst($systemTranslation->translate('search-query')));
         $this->template->addBreadcrumb('/adminsearch/searchresults', ucfirst($systemTranslation->translate('search-results')));
+
+
         return $this->write(array());
     }
 
