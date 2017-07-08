@@ -119,7 +119,7 @@ class UserController extends Controller
         $userManager = new UserManager($this->getLanguage());
 
         if (!empty($_POST['search'])) {
-            $users = $userManager->getUserByid($_POST['search']);
+            $users = $userManager->getUserById($_POST['search']);
         } else {
             $users = $userManager->getUsers();
         }
