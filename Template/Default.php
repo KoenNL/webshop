@@ -39,8 +39,10 @@ echo $template->getHeader();
                 <a href="/" title="Home"><img src="/images/logo.jpeg"></a>
             </div>
             <div class="col-md-3" id="search-box">
-                <input type="text" placeholder="Zoeken...">
+                <form action="/search/search" method="Post">
+                <input type="text" name="search" placeholder="Zoeken...">
                 <button type="button" class="btn btn-sm btn-primary">Zoeken</button>
+                </form>
             </div>
             <div class="col-md-2" id="cart-indicator">
                 <div class="shoppingcart">

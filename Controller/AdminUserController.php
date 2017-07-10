@@ -5,12 +5,16 @@ namespace Controller;
 use Main\Controller;
 use Model\User\User;
 use model\user\UserManager;
+use Model\Translation\SystemTranslation;
+use Model\Translation\TranslationManager;
 
 class UserController extends Controller
 {
     public function userAction($idUser = null)
     {
-        //$systemTranslation = $controller->getValue('systemTranslation');
+        $systemTranslation = new SystemTranslation($this->getLanguage());
+        $translationManager = new TranslationManager($this->getLanguage());
+
         $userManager = new UserManager();
         if ($idUser) {
             $user = $userManager->getUserById($idUser);
@@ -18,8 +22,7 @@ class UserController extends Controller
             $user = new User();
 
         }
-        $systemTranslation = new SystemTranslation($this->getLanguage());
-        $translationManager = new TranslationManager($this->getLanguage());
+
 
         $error = '';
 
@@ -66,6 +69,8 @@ class UserController extends Controller
 
     public function changePasswordAction($idUser)
     {
+        $systemTranslation = new SystemTranslation($this->getLanguage());
+
         $userManager = new UserManager();
         if ($idUser) {
             $user = $userManager->getUserById($idUser);
@@ -88,16 +93,44 @@ class UserController extends Controller
 
     public function loginAction()
     {
+        $systemTranslation = new SystemTranslation($this->getLanguage());
+
         $userManager = new UserManager();
         $user = $userManager->getUserByEmailAddress($_POST);
-        if (!$userManager->checkPassword($user, $_POST['password'])) {
-            sleep(3);
-            return $this->write(array('error' => 'Uw e-mail of wachtwoord is onjuist.'));
+        if(!$userManager->checkPassword($user, $_POST['password'])){
+            sleep(5);
+            return $this->write(array('error' => ucfirst($systemTranslation->translate('passwords-incorrect'))));
         }
         $_SESSION['user'] = $user;
         if ($user->getType() === 'admin') {
             return $this->redirect('adminorder', 'orderlist');
         }
         return $this->redirect('page', 'home');
+    }
+
+    public function userListAction()
+    {
+        $this->template->setTemplate('admin');
+
+        $userManager = new UserManager($this->getLanguage());
+
+        if (!empty($_POST['search'])) {
+            $users = $userManager->getUserById($_POST['search']);
+        } else {
+            $users = $userManager->getUsers();
+        }
+
+        $systemTranslation = new SystemTranslation($this->getLanguage());
+
+        $this->template->setTitle(ucfirst($systemTranslation->translate('user-list')));
+        $this->template->addBreadcrumb('adminuser/userlist', ucfirst($systemTranslation->translate('user-list')));
+
+        $values = array(
+            'users' => $users,
+            'noResults' => $systemTranslation->translate('no-results'),
+            'search' => $systemTranslation->translate('search'),
+            );
+
+        $this->write($values);
     }
 }

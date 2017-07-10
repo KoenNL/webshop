@@ -153,6 +153,13 @@ class SystemTranslation
             'en' => 'there are no results',
             'nl' => 'er zijn geen resultaten'
         ),
+        'search-results' => array(
+            'en' => 'search results',
+            'nl' => 'zoekresultaten'
+        ),
+        'search-query' => array(
+            'en' => 'search query',
+            'nl' => 'zoekopdracht'
         'payment' => array(
             'en' => 'payment',
             'nl' => 'betaling'
@@ -343,9 +350,106 @@ class SystemTranslation
         'password-changed' => array(
             'en' => 'you have succesfully changed your password',
             'nl' => 'U heeft uw wachtwoord succesvol gewijzigd'
+
+        ),
+        'view-order' => array(
+            'en' => 'view order',
+            'nl' => 'bestelling inzien'
+
+        ),
+        'shipping-costs' => array(
+            'en' => 'shipping costs',
+            'nl' => 'verzendkosten'
+
+        ),
+        'shipping-costs-threshold' => array(
+            'en' => 'shipping costs threshold',
+            'nl' => 'verzendkosten drempel'
+
+        ),
+        'default-combination-discount' => array(
+            'en' => 'default combination discount',
+            'nl' => 'standaard combinatiekorting'
+        ),
+        'default-tax' => array(
+            'en' => 'default tax',
+            'nl' => 'standaard BTW precentage'
+
+        ),
+        'default-language' => array(
+            'en' => 'default language',
+            'nl' => 'standaard taal'
+
+        ),
+        'go-to-results' => array(
+            'en' => 'go to results',
+            'nl' => 'naar resultaten'
+
+        ),
+        'go-to-user' => array(
+            'en' => 'go to user',
+            'nl' => 'naar gebruiker'
+
+        ),
+        'translate' => array(
+            'en' => 'translate',
+            'nl' => 'vertalen'
+
+        ),
+        'thanks-for-ordering' => array(
+            'en' => 'thank you for ordering',
+            'nl' => 'bedankt voor uw bestelling'
+
+        ),
+        'order-message' => array(
+            'en' => 'thank you for ordering at Duncan&Brown. You will receive an confirmation e-mail shortly. When we have shipped your order
+            we will e-mail you. Your order will be shipped as soon as possible.',
+            'nl' => 'bedankt voor uw bestlling bij Duncan&Brown. U heeft een e-mail met een bevestiging van ons ontvangen. U
+            krijgt nog een e-mail wanneer wij de bestelling naar u hebben verzonden. Wij sturen de bestelling zo snel
+            mogelijk naar u toe.'
+        ),
+        'order' => array(
+            'en' => 'order',
+            'nl' => 'bestellingen'
+        ),
+        'product' => array(
+            'en' => 'product',
+            'nl' => 'product'
+        ),
+        'price-each' => array(
+            'en' => 'price each',
+            'nl' => 'prijs per stuk'
+        ),
+        'ammount' => array(
+            'en' => 'ammount',
+            'nl' => 'aantal'
+        ),
+        'subtotal' => array(
+            'en' => 'subtotal',
+            'nl' => 'subtotaal'
+        ),
+        'total' => array(
+            'en' => 'total',
+            'nl' => 'totaal'
+        ),
+        'free-shipping' => array(
+            'en' => '(on orders with a total price of over &euro; 75-, shipping is free)',
+            'nl' => '(bij een bestelling van meer dan &euro; 75,- zijn er geen verzendkosten)'
+
+        ),
+        'no-search-results' => array(
+            'en' => 'sorry, no search results found',
+            'nl' => 'sorry, geen zoekresultaat gevonden'
+        ),
+        'insert-query' => array(
+            'en' => 'please enter a search query',
+            'nl' => 'voer alstublieft een zoekopdracht in'
+        ),
+
+        'user-list' => array(
+            'en' => 'user list',
+            'nl' => 'gebruikerslijst'
         )
-
-
     );
 
     /**

@@ -1,15 +1,15 @@
 <div class="row">
     <div class="col-sm-12">
-        <h2>Zoekopdracht</h2>
+        <h2><?php echo ucfirst($systemTranslation->translate('search-query')); ?></h2>
         <table class="table table-hover">
             <tbody>
             <tr>
-                <td>Zoekopdracht</td>
+                <td><?php echo ucfirst($systemTranslation->translate('search-query')); ?></td>
                 <td>Jeans</td>
             </tr>
             <tr>
-                <td>Gebruiker</td>
-                <td><a href="/adminuser/user" title="Naar gebruiker">Jan Jansen</a></td>
+                <td><?php echo ucfirst($systemTranslation->translate('user')); ?></td>
+                <td><a href="/adminuser/user" title="<?php echo ucfirst($systemTranslation->translate('go-to-user')); ?>">Jan Jansen</a></td>
             </tr>
             <tr>
                 <td>Datum</td>
@@ -21,13 +21,13 @@
 </div>
 <div class="row">
     <div class="col-sm-12">
-        <h2>Zoekresultaten</h2>
+        <h2><?php echo ucfirst($systemTranslation->translate('search-results')); ?></h2>
         <table class="table table-hover">
             <thead>
             <tr>
-                <th>Merk</th>
-                <th>Naam</th>
-                <th>Prijs</th>
+                <th><?php echo ucfirst($systemTranslation->translate('brand')); ?></th>
+                <th><?php echo ucfirst($systemTranslation->translate('name')); ?></th>
+                <th><?php echo ucfirst($systemTranslation->translate('price')); ?></th>
             </tr>
             </thead>
             <tbody>
