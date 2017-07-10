@@ -227,6 +227,36 @@ class Controller
     }
 
     /**
+     * Redirect to a specific URL.
+     * @param string $url
+     */
+    protected function redirectURL($url)
+    {
+        return header('Location: ' . $url);
+    }
+
+    /**
+     * Returns the controller and action from the HTTP referrer.
+     * Returns null referrer is not from this domain or if controller or action is not set.
+     * @return null|string
+     */
+    protected function getReferrer()
+    {
+        if (empty($_SERVER['HTTP_REFERER']) || strpos($_SERVER['HTTP_REFERER'], Config::getValue('path.host')) === false) {
+            return null;
+        }
+
+        $uri = trim(str_replace(Config::getValue('path.host'), '', $_SERVER['HTTP_REFERER']), '/');
+        $uriParts = explode('/', $uri);
+
+        if (empty($uriParts[0]) || empty($uriParts[1])) {
+            return null;
+        }
+
+        return $uriParts[0] . '/' . $uriParts[1];
+    }
+
+    /**
      * Set the language. Will be stored in a _SESSION value.
      * @param int $language
      * @return Controller $this

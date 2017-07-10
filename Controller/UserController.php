@@ -124,7 +124,15 @@ class UserController extends Controller
         if ($user->getType() === 'admin') {
             return $this->redirect('adminorder', 'orderlist');
         }
-        return $this->redirect('page', 'home');
+
+        // Redirect according to the referrer.
+        switch ($this->getReferrer()) {
+            case 'order/cart':
+                return $this->redirect('order', 'summary');
+            default:
+                return $this->redirectURL($_SERVER['HTTP_REFERER']);
+        }
+
     }
 
     public function logOffAction()
@@ -135,7 +143,7 @@ class UserController extends Controller
 
         unset($_SESSION['user']);
 
-        $this->redirect('page', 'home');
+        return $this->redirect('page', 'home');
     }
 
 }
