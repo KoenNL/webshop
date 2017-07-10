@@ -160,6 +160,7 @@ class SystemTranslation
         'search-query' => array(
             'en' => 'search query',
             'nl' => 'zoekopdracht'
+        ),
         'payment' => array(
             'en' => 'payment',
             'nl' => 'betaling'
