@@ -34,7 +34,7 @@ class ProductManager
      * @param array|null $featureValues
      * @return array Array of Product objects
      */
-    public function getProducts($idCategory = null, array $featureValues = null)
+    public function getProducts($search = null, $idCategory = null, array $featureValues = null)
     {
         // Get the basic product SQL
         $productSql = $this->getProductSql();
@@ -46,8 +46,15 @@ class ProductManager
         $whereSet = false;
 
         // If any of the parameters are set, start preparing WHERE statements.
-        if (!empty($idCategory) || !empty($featureValues)) {
+        if (!empty($search) || !empty($idCategory) || !empty($featureValues)) {
             $sql .= ' WHERE ';
+
+            // Set WHERE statements to search for a search query.
+            if (!empty($search)) {
+                $sql .= '(`Product`.`brand` LIKE :search OR `NameTranslation`.`translation` LIKE :search) ';
+                $parameters['search'] = '%' . $search . '%';
+                $whereSet = true;
+            }
 
             // Set WHERE statements to search for a category.
             if (!empty($idCategory)) {
@@ -70,14 +77,14 @@ class ProductManager
 
         if (!$whereSet) {
             $sql .= ' WHERE ';
+        } else {
+            $sql .= ' AND ';
         }
 
         // Set the language for the correct translations.
         $sql .= $productSql['where'];
         $parameters['idLanguage'] = $this->language;
         $parameters['active'] = true;
-
-        $statement = Database::query($sql, $parameters);
 
         $products = $this->fetchProducts($sql, $parameters);
 

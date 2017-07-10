@@ -1,25 +1,29 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: Arie Schouten
- * Date: 21-6-2017
- * Time: 20:54
- */
+namespace Model\Search;
+
+use Main\Database;
+
 class SearchManager
 {
+
     /**
-     * save Search
+     * @param Search $search
+     * @return bool
      */
     public function save(Search $search)
     {
-        if ($search->getId()) {
+        if ($search->getIdSearch()) {
             return $this->update($search);
         }
         return $this->insert($search);
     }
 
-    public function getSearchByid($idSearch)
+    /**
+     * @param int $idSearch
+     * @return Search
+     */
+    public function getSearchById($idSearch)
     {
         $sql = 'SELECT *
         FROM `Search`
@@ -40,19 +44,23 @@ class SearchManager
      */
     public function getSearches()
     {
-        $sql = 'SELECT * 
-          FROM `Search`';
+        $sql = 'SELECT * FROM `Search`';
 
-        $users = array();
+        $searches = array();
 
         $statement = Database::query($sql);
-        // Return a mutiple user
+        // Return multiple searches
         while ($search = Database::fetchObject($statement, 'Model\\Search\\Search')) {
             $searches[] = $search;
         }
 
         return $searches;
     }
+
+    /**
+     * @param int $idSearch
+     * @return object
+     */
     public function getSearchResults($idSearch)
     {
         $sql = 'SELECT * 
@@ -68,40 +76,73 @@ class SearchManager
         //Return a single emailAddress
         return Database::fetchObject($statement, 'Model\\Search\\Search');
     }
-    private function insert(Search $search) {
-        $sql = 'INSERT INTO `search`(`idSearch`,`idUser`,`query`,`time`)
-                VALUES (:idSearch,:idUser,:query,:time)';
-        $parameters = array(
-            'idSearch' => $search->getSearch(),
-            'idUser' => $search->getUser(),
-            'query' => $search->getQuery(),
-            'time' => $search->getTime(),
 
+    /**
+     * @param Search $search
+     * @return bool
+     */
+    private function insert(Search $search) {
+        $sql = 'INSERT INTO `Search`(`idUser`,`query`,`time`)
+                VALUES (:idUser,:query,:time)';
+        $parameters = array(
+            'idUser' => $search->getUser() ? $search->getUser()->getIdUser() : null,
+            'query' => $search->getQuery(),
+            'time' => $search->getTime()->format('Y-m-d H:i:s'),
         );
-        /**
-         * is dit nodig Koen wat hieronder staat eerste deel?
-         */
-        $statement = Database::query($sql, $parameters);
+
+        Database::query($sql, $parameters);
         $idSearch = Database::getLastInsertId();
+
         if (!$idSearch) {
             return false;
         }
-        $idSearch->setIdUser($idSearch);
+
+        $search->setIdSearch($idSearch);
+
+        $this->insertSearchResults($search);
+
         return true;
     }
+
+    /**
+     * @param Search $search
+     * @return bool
+     */
     private function update(Search $search) {
-        $sql = 'UPDATE `search` SET
-                `idSearch` = :idSearch,
+        $sql = 'UPDATE `Search` SET
                 `idUser` = :idUser,
                 `query` = :query,
-                `time` = :TIME';
+                `time` = :time
+                WHERE `idSearch` = :idSearch';
         $parameters = array(
-            'idSearch' => $search->getSearch(),
-            'idUser' => $search->getUser(),
+            'idSearch' => $search->getIdSearch(),
+            'idUser' => $search->getUser() ? $search->getUser()->getIdUser() : '',
             'query' => $search->getQuery(),
-            'time' => $search->getTime(),
+            'time' => $search->getTime()->format('Y-m-d H:i:s'),
         );
-        database::query($sql,$parameters);
+        Database::query($sql,$parameters);
         return true;
     }
+
+    /**
+     * @param Search $search
+     * @return bool
+     */
+    private function insertSearchResults(Search $search)
+    {
+        if (!$search->getIdSearch()) {
+            return false;
+        }
+        $sql = 'INSERT INTO `SearchResult` VALUES(:idSearch, :idProduct)';
+
+        $parameters = array('idSearch' => $search->getIdSearch());
+
+        foreach ($search->getProducts() as $product) {
+            $parameters['idProduct'] = $product->getIdProduct();
+            Database::query($sql, $parameters);
+        }
+
+        return true;
+    }
+
 }

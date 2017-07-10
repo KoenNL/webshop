@@ -26,13 +26,13 @@ class EmailManager
 
         $mail = new PHPMailer;
 
-        $mail->isSMTP();                                      // Set mailer to use SMTP
-        $mail->Host = Config::getValue('smtp.host');;  // Specify main and backup SMTP servers
-        $mail->SMTPAuth = true;                               // Enable SMTP authentication
-        $mail->Username = Config::getValue('smtp.username');                 // SMTP username
-        $mail->Password = Config::getValue('smtp.password');;                           // SMTP password
-        $mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
-        $mail->Port = Config::getValue('smtp.port');;                                    // TCP port to connect to
+        $mail->isSMTP();
+        $mail->Host = Config::getValue('smtp.host');
+        $mail->SMTPAuth = true;
+        $mail->Username = Config::getValue('smtp.username');
+        $mail->Password = Config::getValue('smtp.password');
+        $mail->SMTPSecure = 'tls';
+        $mail->Port = Config::getValue('smtp.port');
 
         $mail->setFrom($shop->getEmailAddress(), $shop->getName());
         $mail->addAddress($user->getEmailAddress(), $user->getName());

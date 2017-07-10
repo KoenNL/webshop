@@ -1,5 +1,10 @@
 <?php
 
+namespace Model\Search;
+
+use Model\Product\Product;
+use Model\User\User;
+
 /**
  * Created by PhpStorm.
  * User: Arie Schouten
@@ -13,17 +18,21 @@ class Search
      */
     private $idSearch;
     /**
-     * @var int
+     * @var User
      */
-    private $idUser;
+    private $user;
     /**
      * @var string
      */
     private $query;
     /**
-     * @var datetime
+     * @var \DateTime
      */
     private $time;
+    /**
+     * @var array
+     */
+    private $products = array();
 
     /**
      * @param $idSearch
@@ -43,20 +52,20 @@ class Search
     }
 
     /**
-     * @param $idUser
+     * @param User $user
      * @return $this
      */
-    public function setIdUser($idUser)
+    public function setUser(User $user)
     {
-        $this->idUser = (int)$idUser;
+        $this->user = $user;
         return $this;
     }
     /**
-     * @return int
+     * @return User
      */
-    public function getIdUser()
+    public function getUser()
     {
-        return $this->idUser;
+        return $this->user;
     }
 
     /**
@@ -78,20 +87,58 @@ class Search
     }
 
     /**
-     * @param $time
+     * @param mixed $time
+     * @return Search
      */
     public function setTime($time)
     {
-        $this->time = $time;
-        /**
-         *
-         */
+        if (is_string($time)) {
+            $this->time = new DateTime($time);
+        } elseif (is_object($time) && is_a($time, 'DateTime')) {
+            $this->time = $time;
+        } else {
+            throw new Exception('Invalid value set in ' . __METHOD__);
+        }
+
+        return $this;
     }
     /**
-     * @return datetime
+     * @return \DateTime
      */
     public function getTime()
     {
         return $this->time;
+    }
+
+    /**
+     * @param Product $product
+     * @return Search $this
+     */
+    public function addProduct(Product $product)
+    {
+        $this->products[] = $product;
+
+        return $this;
+    }
+
+    /**
+     * @param array $products
+     * @return Search $this
+     */
+    public function setProducts(array $products)
+    {
+        foreach ($products as $product) {
+            $this->addProduct($product);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getProducts()
+    {
+        return $this->products;
     }
 }

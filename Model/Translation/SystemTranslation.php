@@ -409,14 +409,6 @@ class SystemTranslation
             krijgt nog een e-mail wanneer wij de bestelling naar u hebben verzonden. Wij sturen de bestelling zo snel
             mogelijk naar u toe.'
         ),
-        'order' => array(
-            'en' => 'order',
-            'nl' => 'bestellingen'
-        ),
-        'product' => array(
-            'en' => 'product',
-            'nl' => 'product'
-        ),
         'price-each' => array(
             'en' => 'price each',
             'nl' => 'prijs per stuk'
@@ -424,14 +416,6 @@ class SystemTranslation
         'ammount' => array(
             'en' => 'ammount',
             'nl' => 'aantal'
-        ),
-        'subtotal' => array(
-            'en' => 'subtotal',
-            'nl' => 'subtotaal'
-        ),
-        'total' => array(
-            'en' => 'total',
-            'nl' => 'totaal'
         ),
         'free-shipping' => array(
             'en' => '(on orders with a total price of over &euro; 75-, shipping is free)',

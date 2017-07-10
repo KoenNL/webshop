@@ -41,7 +41,7 @@ echo $template->getHeader();
             <div class="col-md-3" id="search-box">
                 <form action="/search/search" method="Post">
                 <input type="text" name="search" placeholder="Zoeken...">
-                <button type="button" class="btn btn-sm btn-primary">Zoeken</button>
+                <button type="submit" class="btn btn-sm btn-primary">Zoeken</button>
                 </form>
             </div>
             <div class="col-md-2" id="cart-indicator">

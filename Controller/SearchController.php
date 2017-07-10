@@ -1,41 +1,50 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: Arie Schouten
- * Date: 28-6-2017
- * Time: 20:17
- */
-
 namespace Controller;
 
 
 use Main\Controller;
 use Model\Product\ProductManager;
+use Model\Search\Search;
+use Model\Search\SearchManager;
 use Model\Translation\SystemTranslation;
 
 class SearchController extends Controller
 {
 
-    public function searchAction($search = null)
+    public function searchAction()
     {
-        $search = $_POST['search'];
-        $productmanager = new ProductManager($this->getLanguage());
+        $query = $_POST['search'];
+        $productManager = new ProductManager($this->getLanguage());
         $systemTranslation = new SystemTranslation($this->getLanguage());
-        $products = $productmanager->getProducts($search);
+        $products = $productManager->getProducts($query);
+
+        $values = array(
+            'products' => $products,
+            'systemTranslation' => $systemTranslation
+        );
+
+        $this->template->setTitle(ucfirst($systemTranslation->translate('search-results')));
+        $this->template->addBreadcrumb('search/search', ucfirst($systemTranslation->translate('search-results')));
 
         if (empty($_POST['search'])) {
-            return $this->write(array('error' => ucfirst($systemTranslation->translate('insert-query'))));
-        }
-        if (!$products) {
-            return $this->write(array('error' => ucfirst($systemTranslation->translate('no-search-results'))));
+            $values['error'] = ucfirst($systemTranslation->translate('insert-query'));
+            return $this->write($values);
         }
 
-        $values = array('products' => $products,
-            'systemTranslation' => $systemTranslation);
+        $search = new Search;
+        $search->setQuery($query)
+            ->setTime(new \DateTime)
+            ->setProducts($products);
+
+        if (!empty($_SESSION['user'])) {
+            $search->setUser($_SESSION['user']);
+        }
+
+        $searchManager = new SearchManager;
+        $searchManager->save($search);
 
         return $this->write($values);
     }
 
 }
-

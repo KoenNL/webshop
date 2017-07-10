@@ -171,6 +171,8 @@ class OrderController extends Controller
         $shopManager = new ShopManager;
         $shop = $shopManager->getShopById(Config::getValue('idShop'));
 
+        $order->setIdUser($user->getIdUser());
+
         $orderManager = new OrderManager;
         $orderManager->save($order);
 
