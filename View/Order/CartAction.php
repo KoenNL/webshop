@@ -60,7 +60,7 @@ if ($controller->getValue('error')) : ?>
                     ?>
                     <tr>
                         <td>
-                            <img src="<?php echo $product->getPrimaryImage()->getPath(); ?>" class="img-tiny pull-left">
+                            <img src="<?php echo $product->getPrimaryImage() ? $product->getPrimaryImage()->getPath() : ''; ?>" class="img-tiny pull-left">
                             <h4><?php echo $product->getBrand(); ?></h4>
                             <p><?php echo $product->getName(); ?>
                                 <i>

@@ -47,7 +47,8 @@ class UserController extends Controller
 
 
             if (empty($_POST['name']) || empty($_POST['email-address']) || empty($_POST['password']) || empty($_POST['language']) || empty($_POST['address'])
-                || empty($_POST['postal-code']) || empty($_POST['city'])) {
+                || empty($_POST['postal-code']) || empty($_POST['city'])
+            ) {
                 $error = $systemTranslation->translate('required-values-missing');
             } elseif ($_POST['password'] !== $_POST['password-repeat']) {
                 $error = $systemTranslation->translate('passwords-do-not-match');
@@ -111,13 +112,22 @@ class UserController extends Controller
     public function loginAction()
     {
         $systemTranslation = new SystemTranslation($this->getLanguage());
-        $this->template->setTemplate(null);
+        $this->template->setTemplate('plain');
         $userManager = new UserManager();
-        $user = $userManager->getUserByEmailAddress($_POST['login-email-address']);
+        $user = $userManager->getUserByEmailAddress(!empty($_POST['login-email-address']) ? $_POST['login-email-address'] : null);
 
-        if (!$user || !$userManager->checkPassword($user, $_POST['login-password'])) {
+        $this->template->setTitle(ucfirst($systemTranslation->translate('login')));
+
+        $values = array(
+            'systemTranslation' => $systemTranslation
+        );
+
+        if ((empty($_POST['login-email-address']) && !$user)
+            || (!empty($_POST['login-email-address']) && $user && !$userManager->checkPassword($user, $_POST['login-password']))
+        ) {
             sleep(3);
-            return $this->write(array('error' => ucfirst($systemTranslation->translate('password-email-incorrect'))));
+            $values['error'] = ucfirst($systemTranslation->translate('password-email-incorrect'));
+            return $this->write($values);
         }
         $_SESSION['user'] = $user;
 
@@ -133,6 +143,7 @@ class UserController extends Controller
                 return $this->redirectURL($_SERVER['HTTP_REFERER']);
         }
 
+        return $this->write($values);
     }
 
     public function logOffAction()

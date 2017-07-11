@@ -122,3 +122,7 @@ $(document).on('click', '.remove-order-line', function() {
 
     changeOrderLineAmount(idVariation);
 });
+
+$(document).on('click', '.checkbox-submit', function() {
+    $(this).parents('form').submit();
+});

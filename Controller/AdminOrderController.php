@@ -1,12 +1,11 @@
 <?php
 namespace Controller;
 
-use Main\Controller;
 use Model\Order\Order;
 use Model\Order\OrderManager;
 use Model\Translation\SystemTranslation;
 
-class AdminOrderController extends Controller
+class AdminOrderController extends OrderController
 {
 
     public function orderListAction()

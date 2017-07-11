@@ -3,7 +3,6 @@
 namespace Controller;
 
 use Main\Controller;
-use Model\Menu\MenuManager;
 use Model\Product\ProductManager;
 use Model\Translation\SystemTranslation;
 
@@ -26,14 +25,18 @@ class ProductController extends Controller
         }
 
         $this->template->setTitle($title);
-        $this->template->addBreadcrumb('product/list', $systemTranslation->translate('product-list'));
+        if (!empty($_SERVER['HTTP_REFERER'])) {
+            $this->template->addBreadcrumb($_SERVER['HTTP_REFERER'], $systemTranslation->translate('product-list'));
+        } else {
+            $this->template->addBreadcrumb('page/home', $systemTranslation->translate('product-list'));
+        }
         $this->template->addBreadcrumb('product/product/' . $uri, $title);
 
         $values = array(
             'product' => $product,
             'features' => $features,
             'title' => $title,
-            'notFound' => $systemTranslation->translate('product-not-found-explanation')
+            'systemTranslation' => $systemTranslation
         );
 
         $this->write($values);

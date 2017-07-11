@@ -1,19 +1,11 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: Arie Schouten
- * Date: 28-6-2017
- * Time: 20:16
- */
-
 namespace Controller;
 
-use Main\Controller;
 use Model\Translation\SystemTranslation;
 
 
-class AdminSearchController extends Controller
+class AdminSearchController extends SearchController
 {
 
     public function searchListAction()

@@ -201,7 +201,11 @@ class AdminProductController extends ProductController
 
         $feature = new Feature;
 
-        $feature->setName($_POST['name']);
+        $translation = new Translation;
+        $translation->setIdLanguage($this->getLanguage())
+            ->setTranslation($_POST['name']);
+
+        $feature->setName($translation);
 
         if (!$productManager->saveFeature($feature)) {
             return $this->write(array('message' => $systemTranslation->translate('failed-to-save')), 422);

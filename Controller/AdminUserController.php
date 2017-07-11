@@ -2,13 +2,12 @@
 
 namespace Controller;
 
-use Main\Controller;
 use Model\User\User;
 use model\user\UserManager;
 use Model\Translation\SystemTranslation;
 use Model\Translation\TranslationManager;
 
-class UserController extends Controller
+class AdminUserController extends UserController
 {
     public function userAction($idUser = null)
     {

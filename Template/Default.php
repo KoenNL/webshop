@@ -82,27 +82,27 @@ echo $template->getHeader();
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                            aria-expanded="false">Herenmode</a>
                         <ul class="dropdown-menu">
-                            <li><a href="/category/productlist">Jeans</a></li>
-                            <li><a href="/category/productlist">Shirts</a></li>
-                            <li><a href="/category/productlist">Schoenen</a></li>
+                            <li><a href="/category/productlist/4">Jeans</a></li>
+                            <li><a href="/category/productlist/5">Shirts</a></li>
+                            <li><a href="/category/productlist/6">Schoenen</a></li>
                         </ul>
                     </li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                            aria-expanded="false">Damesmode</a>
                         <ul class="dropdown-menu">
-                            <li><a href="/category/productlist">Rokken</a></li>
-                            <li><a href="/category/productlist">Tops</a></li>
-                            <li><a href="/category/productlist">Schoenen</a></li>
+                            <li><a href="/category/productlist/7">Rokken</a></li>
+                            <li><a href="/category/productlist/8">Tops</a></li>
+                            <li><a href="/category/productlist/9">Schoenen</a></li>
                         </ul>
                     </li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                            aria-expanded="false">Tienermode</a>
                         <ul class="dropdown-menu">
-                            <li><a href="/category/productlist">Jeans</a></li>
-                            <li><a href="/category/productlist">Shirts</a></li>
-                            <li><a href="/category/productlist">Schoenen</a></li>
+                            <li><a href="/category/productlist/10">Jeans</a></li>
+                            <li><a href="/category/productlist/11">Shirts</a></li>
+                            <li><a href="/category/productlist/12">Schoenen</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -131,7 +131,9 @@ echo $template->getHeader();
             <?php
             $breadcrumbs = $template->getBreadcrumbs();
             for ($i = 0; $i < count($breadcrumbs); $i++) : ?>
-                <a href="/<?php echo $breadcrumbs[$i]['path']; ?>"><?php echo $breadcrumbs[$i]['title']; ?></a>
+                <a href="<?php echo (strpos($breadcrumbs[$i]['path'], 'http') !== false) ? $breadcrumbs[$i]['path'] : '/' . $breadcrumbs[$i]['path']; ?>">
+                    <?php echo $breadcrumbs[$i]['title']; ?>
+                </a>
                 <?php if ($i + 1 < count($breadcrumbs)) : ?>
                     -&gt;
                 <?php endif; ?>

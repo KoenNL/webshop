@@ -1,5 +1,6 @@
 <?php
 $product = $controller->getValue('product');
+$systemTranslation = $controller->getValue('systemTranslation');
 if ($product) :
     ?>
     <div class="row">
@@ -59,10 +60,17 @@ if ($product) :
                 </div>
                 <div class="row">
                     <div class="col-sm-12">
-                        <input type="submit" class="btn btn-primary" value="Plaats in winkelwagen" name="order">
+                        <input type="submit" class="btn btn-primary" value="<?php echo ucfirst($systemTranslation->translate('place-in-cart')); ?>" name="order">
                     </div>
                 </div>
             </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4 col-sm-12">
+            <a href="javascript:history.back();" title="<?php echo $systemTranslation->translate('go-back'); ?>">
+                <?php echo ucfirst($systemTranslation->translate('go-back')); ?>
+            </a>
         </div>
     </div>
 <?php else : ?>
@@ -70,7 +78,9 @@ if ($product) :
         <div class="col-sm-12">
             <h2><?php echo $controller->getValue('title'); ?></h2>
             <p><?php echo $controller->getValue('notFound'); ?></p>
-            <a href="">Ga terug</a>
+            <a href="javascript:history.back();" title="<?php echo $systemTranslation->translate('go-back'); ?>">
+                <?php echo ucfirst($systemTranslation->translate('go-back')); ?>
+            </a>
         </div>
     </div>
 

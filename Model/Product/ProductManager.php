@@ -31,10 +31,10 @@ class ProductManager
     /**
      * Get an array of Product objects.
      * @param int|null $idCategory
-     * @param array|null $featureValues
+     * @param array|null $features
      * @return array Array of Product objects
      */
-    public function getProducts($search = null, $idCategory = null, array $featureValues = null)
+    public function getProducts($search = null, $idCategory = null, array $features = null)
     {
         // Get the basic product SQL
         $productSql = $this->getProductSql();
@@ -46,7 +46,7 @@ class ProductManager
         $whereSet = false;
 
         // If any of the parameters are set, start preparing WHERE statements.
-        if (!empty($search) || !empty($idCategory) || !empty($featureValues)) {
+        if (!empty($search) || !empty($idCategory) || !empty($features)) {
             $sql .= ' WHERE ';
 
             // Set WHERE statements to search for a search query.
@@ -58,20 +58,43 @@ class ProductManager
 
             // Set WHERE statements to search for a category.
             if (!empty($idCategory)) {
+                if ($whereSet) {
+                    $sql .= ' AND ';
+                }
                 $sql .= '`ProductCategory`.`idCategory` = :idCategory ';
                 $parameters['idCategory'] = (int)$idCategory;
                 $whereSet = true;
             }
 
             // Set WHERE statements to search for feature values.
-            if (!empty($featureValues)) {
-                foreach ($featureValues as $key => $featureValue) {
-                    if ($whereSet) {
+            if (!empty($features)) {
+                if ($whereSet) {
+                    $sql .= ' AND ';
+                }
+                $featureTotal = count($features);
+                $featureCount = 1;
+                foreach ($features as $idFeature => $featureValues) {
+                    $featureValueTotal = count($featureValues);
+                    $featureValueCount = 1;
+                    $sql .= '(';
+                    foreach ($featureValues as $key => $featureValue) {
+                        $sql .= '`FeatureValue`.`idFeatureValue` = :featureValue' . $key;
+                        $parameters['featureValue' . $key] = (int)$featureValue;
+
+                        if ($featureValueCount < $featureValueTotal) {
+                            $sql .= ' OR ';
+                        }
+
+                        $featureValueCount++;
+                    }
+                    $sql .= ')';
+                    if ($featureCount < $featureTotal) {
                         $sql .= ' AND ';
                     }
-                    $sql .= '`FeatureValue`.`idFeatureValue` = :featureValue' . $key;
-                    $parameters['featureValue' . $key] = (int)$featureValue;
+
+                    $featureCount++;
                 }
+                $whereSet = true;
             }
         }
 
@@ -83,6 +106,7 @@ class ProductManager
 
         // Set the language for the correct translations.
         $sql .= $productSql['where'];
+        $sql .= ' ORDER BY `Product`.`idProduct`';
         $parameters['idLanguage'] = $this->language;
         $parameters['active'] = true;
 
@@ -402,9 +426,10 @@ class ProductManager
 
     /**
      * Get an array of all the features.
+     * @param bool $getFeatureValues
      * @return array An array of Feature objects.
      */
-    public function getFeatures()
+    public function getFeatures($getFeatureValues = false)
     {
         $sql = 'SELECT * FROM `Feature`
             JOIN `Translation` ON `Feature`.`name` = `Translation`.`idTranslation`
@@ -414,8 +439,16 @@ class ProductManager
 
         $features = array();
 
+        $key = 0;
+
         while ($featureRow = Database::fetch($statement)) {
-            $features[] = $this->arrayToFeature($featureRow);
+            $features[$key] = $this->arrayToFeature($featureRow);
+
+            if ($getFeatureValues) {
+                $features[$key]->setFeatureValues($this->getFeatureValuesByFeature($featureRow['idFeature']));
+            }
+
+            $key++;
         }
 
         return $features;
@@ -453,7 +486,7 @@ class ProductManager
         $sql = 'SELECT `Variation`.* FROM `Variation`';
         $parameters = array('idProduct' => $idProduct);
         foreach ($features as $idFeature => $idFeatureValue) {
-            $sql .= 'JOIN `VariationFeatureValue` AS `VariationFeatureValue' . $idFeature . '` 
+            $sql .= ' JOIN `VariationFeatureValue` AS `VariationFeatureValue' . $idFeature . '` 
                 ON `Variation`.`idVariation` = `VariationFeatureValue' . $idFeature . '`.`idVariation`
                 AND `VariationFeatureValue' . $idFeature . '`.`idFeatureValue` = :idFeatureValue' . $idFeature;
             $parameters['idFeatureValue' . $idFeature] = $idFeatureValue;
@@ -508,7 +541,8 @@ class ProductManager
           JOIN `Translation` ON `Feature`.`name` = `Translation`.`idTranslation`
           JOIN `VariationFeatureValue` ON `FeatureValue`.`idFeatureValue` = `VariationFeatureValue`.`idFeatureValue`
           JOIN `Variation` ON `VariationFeatureValue`.`idVariation` = `Variation`.`idVariation`
-          WHERE `Variation`.`idProduct` = :idProduct';
+          WHERE `Variation`.`idProduct` = :idProduct
+          GROUP BY `FeatureValue`.`idFeatureValue`';
 
         $parameters = array(
             'idProduct' => $idProduct

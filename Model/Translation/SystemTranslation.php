@@ -324,6 +324,10 @@ class SystemTranslation
             'en' => 'new user',
             'nl' => 'nieuwe gebruiker'
         ),
+        'no-account' => array(
+            'en' => 'no account',
+            'nl' => 'nog geen account'
+        ),
         'actions' => array(
             'en' => 'actions',
             'nl' => 'acties'
@@ -382,6 +386,10 @@ class SystemTranslation
             'nl' => 'standaard taal'
 
         ),
+        'go-back' => array(
+            'en' => 'go back',
+            'nl' => 'ga terug'
+        ),
         'go-to-results' => array(
             'en' => 'go to results',
             'nl' => 'naar resultaten'
@@ -408,6 +416,10 @@ class SystemTranslation
             'nl' => 'bedankt voor uw bestlling bij Duncan&Brown. U heeft een e-mail met een bevestiging van ons ontvangen. U
             krijgt nog een e-mail wanneer wij de bestelling naar u hebben verzonden. Wij sturen de bestelling zo snel
             mogelijk naar u toe.'
+        ),
+        'place-in-cart' => array(
+            'en' => 'place in shopping cart',
+            'nl' => 'plaats in winkelwagen'
         ),
         'price-each' => array(
             'en' => 'price each',

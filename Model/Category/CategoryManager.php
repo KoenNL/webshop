@@ -22,21 +22,9 @@ class CategoryManager
      */
     public function getCategories()
     {
-        $sql = 'SELECT `Category`.`idCategory`, `Category`.`idParentCategory`, `Category`.`position`, `Category`.`active`, 
-            `Translation`.`idTranslation`, `Translation`.`translation`,
-            `ParentCategory`.`idCategory` AS `parentIdCategory`, `ParentCategory`.`position` AS `parentPosition`, 
-            `ParentCategory`.`active` AS `parentActive`, `ParentTranslation`.`idTranslation` AS `parentIdTranslation`, 
-            `ParentTranslation`.`translation` AS `parentTranslation`,
-            IF(`ParentCategory`.`position` IS NULL, CONCAT(`Category`.`position`, 0), CONCAT(`ParentCategory`.`position`, `Category`.`Position`)) AS `positionOrder`
-            FROM `Category`
-            LEFT JOIN `Category` AS `ParentCategory` ON `Category`.`idParentCategory` = `ParentCategory`.`idCategory`
-            JOIN `Translation` ON `Category`.`name` = `Translation`.`idTranslation`
-            LEFT JOIN `Translation` AS `ParentTranslation` ON `ParentCategory`.`name` = `Translation`.`idTranslation`
-            WHERE `Category`.`active` = :active 
-            AND (`ParentCategory`.`active` = :active OR `ParentCategory`.`active` IS NULL) 
-            AND `Translation`.`idLanguage` = :idLanguage
-            AND (`ParentTranslation`.`idLanguage` = :idLanguage OR `ParentTranslation`.`idLanguage` IS NULL)
-            ORDER BY `positionOrder`';
+        $categorySql = $this->getCategorySql();
+
+        $sql = $categorySql['sql'] . ' WHERE ' . $categorySql['where'] . ' ORDER BY `positionOrder`';
 
         $parameters = array(
             'active' => true,
@@ -58,6 +46,55 @@ class CategoryManager
         }
 
         return $categories;
+    }
+
+    /**
+     * @param int $idCategory
+     * @return Category
+     */
+    public function getCategoryById($idCategory)
+    {
+        $categorySql = $this->getCategorySql();
+
+        $sql = $categorySql['sql'] . ' WHERE ' . $categorySql['where'] . ' AND `Category`.`idCategory` = :idCategory';
+
+        $parameters = array(
+            'active' => true,
+            'idLanguage' => $this->idLanguage,
+            'idCategory' => $idCategory
+        );
+
+        $statement = Database::query($sql, $parameters);
+
+        $categoryRow = Database::fetch($statement);
+
+        $translation = new Translation;
+        $translation->setIdLanguage($this->idLanguage)
+            ->setIdTranslation($categoryRow['idTranslation'])
+            ->setTranslation($categoryRow['translation']);
+
+        $category = new Category;
+        $category->setIdCategory($categoryRow['idCategory'])
+            ->setName($translation)
+            ->setPosition($categoryRow['position'])
+            ->setActive($categoryRow['active']);
+
+        if (!empty($categoryRow['idParentCategory'])) {
+            $translation = new Translation;
+            $translation->setIdLanguage($this->idLanguage)
+                ->setIdTranslation($categoryRow['parentIdTranslation'])
+                ->setTranslation($categoryRow['parentTranslation']);
+
+            $parentCategory = new Category;
+            $parentCategory->setIdCategory($categoryRow['parentIdCategory'])
+                ->setName($translation)
+                ->setPosition($categoryRow['parentPosition'])
+                ->setActive($categoryRow['parentActive']);
+
+            $category->setParentCategory($parentCategory);
+        }
+
+        return $category;
     }
 
     /**
@@ -83,6 +120,24 @@ class CategoryManager
         }
 
         return $category;
+    }
+
+    private function getCategorySql()
+    {
+        return array('sql' => 'SELECT `Category`.`idCategory`, `Category`.`idParentCategory`, `Category`.`position`, `Category`.`active`, 
+            `Translation`.`idTranslation`, `Translation`.`translation`,
+            `ParentCategory`.`idCategory` AS `parentIdCategory`, `ParentCategory`.`position` AS `parentPosition`, 
+            `ParentCategory`.`active` AS `parentActive`, `ParentTranslation`.`idTranslation` AS `parentIdTranslation`, 
+            `ParentTranslation`.`translation` AS `parentTranslation`,
+            IF(`ParentCategory`.`position` IS NULL, CONCAT(`Category`.`position`, 0), CONCAT(`ParentCategory`.`position`, `Category`.`Position`)) AS `positionOrder`
+            FROM `Category`
+            LEFT JOIN `Category` AS `ParentCategory` ON `Category`.`idParentCategory` = `ParentCategory`.`idCategory`
+            JOIN `Translation` ON `Category`.`name` = `Translation`.`idTranslation`
+            LEFT JOIN `Translation` AS `ParentTranslation` ON `ParentCategory`.`name` = `ParentTranslation`.`idTranslation`',
+        'where' => ' `Category`.`active` = :active 
+            AND (`ParentCategory`.`active` = :active OR `ParentCategory`.`active` IS NULL) 
+            AND `Translation`.`idLanguage` = :idLanguage
+            AND (`ParentTranslation`.`idLanguage` = :idLanguage OR `ParentTranslation`.`idLanguage` IS NULL)');
     }
 
 }

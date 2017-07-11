@@ -2,10 +2,7 @@
 
 namespace Controller;
 
-
-use Main\Controller;
-
-class AdminCategoryController extends Controller
+class AdminCategoryController extends CategoryController
 {
 
     public function categoryListAction (){

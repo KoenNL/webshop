@@ -1,117 +1,57 @@
+<?php
+$category = $controller->getValue('category');
+$systemTranslation = $controller->getValue('systemTranslation');
+$featureValues = $controller->getValue('featureValues');
+?>
 <div class="row">
     <div class="col-sm-12">
-        <h3>Keuze</h3>
+        <h3><?php echo ucfirst($systemTranslation->translate('features')); ?></h3>
     </div>
 </div>
 <div class="row product-selection-container">
     <div class="col-md-2 feature-selection-container">
-        <form>
-            <div class="feature-selection">
-                <h3>Maat</h3>
-                <div class="checkbox">
-                    <label for="feature-maat-s"><input class="checkbox" id="feature-maat-s"
-                                                       type="checkbox">S</label>
+        <form action="/category/productlist/<?php echo $category->getIdCategory(); ?>" method="get">
+            <?php foreach ($controller->getValue('features') as $feature) : ?>
+                <div class="feature-selection">
+                    <h3><?php echo ucfirst($feature->getName()); ?></h3>
+                    <?php foreach ($feature->getFeatureValues() as $featureValue) : ?>
+                        <div class="checkbox">
+                            <label for="features[<?php echo $feature->getIdFeature(); ?>][<?php echo $featureValue->getIdFeatureValue(); ?>]">
+                                <input class="checkbox checkbox-submit"
+                                       id="features[<?php echo $feature->getIdFeature(); ?>][<?php echo $featureValue->getIdFeatureValue(); ?>]"
+                                       name="features[<?php echo $feature->getIdFeature(); ?>][<?php echo $featureValue->getIdFeatureValue(); ?>]"
+                                       type="checkbox" <?php echo !empty($featureValues[$feature->getIdFeature()]) && in_array($featureValue->getIdFeatureValue(), $featureValues[$feature->getIdFeature()]) ? 'checked' : ''; ?>>
+                                <?php echo $featureValue->getValue(); ?></label>
+                        </div>
+                    <?php endforeach; ?>
                 </div>
-                <div class="checkbox">
-                    <label for="feature-maat-m"><input class="checkbox" id="feature-maat-m"
-                                                       type="checkbox">M</label>
-                </div>
-                <div class="checkbox">
-                    <label for="feature-maat-l"><input class="checkbox" id="feature-maat-l"
-                                                       type="checkbox">L</label>
-                </div>
-                <div class="checkbox">
-                    <label for="feature-maat-xl"><input class="checkbox" id="feature-maat-xl"
-                                                        type="checkbox">XL</label>
-                </div>
-            </div>
-            <div class="feature-selection">
-                <h3>Kleur</h3>
-                <div class="checkbox">
-                    <label for="feature-kleur-blauw"><input class="checkbox" id="feature-kleur-blauw"
-                                                            type="checkbox">Blauw</label>
-                </div>
-                <div class="checkbox">
-                    <label for="feature-kleur-geel"><input class="checkbox" id="feature-kleur-geel"
-                                                           type="checkbox">Geel</label>
-                </div>
-                <div class="checkbox">
-                    <label for="feature-kleur-groen"><input class="checkbox" id="feature-kleur-groen"
-                                                            type="checkbox">Groen</label>
-                </div>
-                <div class="checkbox">
-                    <label for="feature-kleur-oranje"><input class="checkbox" id="feature-kleur-oranje"
-                                                             type="checkbox">Oranje</label>
-                </div>
-                <div class="checkbox">
-                    <label for="feature-kleur-rood"><input class="checkbox" id="feature-kleur-rood"
-                                                           type="checkbox">Rood</label>
-                </div>
-                <div class="checkbox">
-                    <label for="feature-kleur-zwart"><input class="checkbox" id="feature-kleur-zwart"
-                                                            type="checkbox">Zwart</label>
-                </div>
-            </div>
+            <?php endforeach; ?>
         </form>
     </div>
     <div class="col-md-10 product-result-container">
         <div class="row">
-            <div class="col-md-3 col-sm-12 product-overview-box">
-                <a href="?page=product" title="Cars Jeans Baggy">
-                    <img class="product-image" src="images/Product%20jeans.jpg">
-                </a>
-                <div class="product-description">
-                    <h3 class="product-brand">
-                        <a href="?page=product" title="Cars Jeans Baggy">Cars</a>
-                    </h3>
-                    <p class="product-title">
-                        <a href="?page=product" title="Cars Jeans Baggy">Jeans Baggy <span
-                                class="product-price">&euro; 79,95</span></a>
-                    </p>
+            <?php foreach ($controller->getValue('products') as $product) : ?>
+                <div class="col-md-3 col-sm-12 product-overview-box">
+                    <a href="/product/product/<?php echo $product->getUri(); ?>"
+                       title="<?php echo $product->getBrand() . ' ' . $product->getName(); ?>">
+                        <img class="product-image"
+                             src="<?php echo $product->getPrimaryImage() ? $product->getPrimaryImage()->getPath() : ''; ?>">
+                    </a>
+                    <div class="product-description">
+                        <h3 class="product-brand">
+                            <a href="/product/product/<?php echo $product->getUri(); ?>"
+                               title="<?php echo $product->getBrand() . ' ' . $product->getName(); ?>"><?php echo $product->getBrand(); ?></a>
+                        </h3>
+                        <p class="product-title">
+                            <a href="/product/product/<?php echo $product->getUri(); ?>"
+                               title="<?php echo $product->getBrand() . ' ' . $product->getName(); ?>">
+                                <?php echo $product->getName(); ?>
+                                <span class="product-price">&euro; <?php echo number_format($product->getPrice(), 2, ',', '.'); ?></span>
+                            </a>
+                        </p>
+                    </div>
                 </div>
-            </div>
-            <div class="col-md-3 col-sm-12 product-overview-box">
-                <a href="?page=product" title="Cars Jeans Baggy">
-                    <img class="product-image" src="images/Product%20shirt.jpg">
-                </a>
-                <div class="product-description">
-                    <h3 class="product-brand">
-                        <a href="?page=product" title="Cars Jeans Baggy">Legendary</a>
-                    </h3>
-                    <p class="product-title">
-                        <a href="?page=product" title="Cars Jeans Baggy">T-shirt <span class="product-price">&euro; 39,95</span></a>
-                    </p>
-                </div>
-            </div>
-            <div class="col-md-3 col-sm-12 product-overview-box">
-                <a href="?page=product" title="Cars Jeans Baggy">
-                    <img class="product-image" src="images/Product%20jeans%202.jpg">
-                </a>
-                <div class="product-description">
-                    <h3 class="product-brand">
-                        <a href="?page=product" title="Cars Jeans Baggy">Vingino</a>
-                    </h3>
-                    <p class="product-title">
-                        <a href="?page=product" title="Cars Jeans Baggy">Jeans Baggy <span
-                                class="product-price">&euro; 79,95</span></a>
-                    </p>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-3 col-sm-12 product-overview-box">
-                <a href="?page=product" title="Cars Jeans Baggy">
-                    <img class="product-image" src="images/Product%20top.jpg">
-                </a>
-                <div class="product-description">
-                    <h3 class="product-brand">
-                        <a href="?page=product" title="Cars Jeans Baggy">Noize</a>
-                    </h3>
-                    <p class="product-title">
-                        <a href="?page=product" title="Cars Jeans Baggy">Top <span class="product-price">&euro; 79,95</span></a>
-                    </p>
-                </div>
-            </div>
+            <?php endforeach; ?>
         </div>
     </div>
 </div>
